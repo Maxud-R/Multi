@@ -20,8 +20,11 @@ public class PlayerControls : MonoBehaviour
 	private float gravity = 15f;
 	private Vector3 boom;
 	
+	//other variables
+	public int health = 100;
+	
 	//camera variables
-	private bool ActiveSwitch;
+	//delete if no err/private bool ActiveSwitch;
 		
 	//components
 	private Transform playerBody;
@@ -86,10 +89,19 @@ public class PlayerControls : MonoBehaviour
 				bomb = PhotonNetwork.Instantiate("Bomb", pos, playerBody.rotation);
 				bomb.GetComponent<Rigidbody>().AddForce(bomb.transform.forward, ForceMode.Impulse);
 		}
+
+		//death
+		if (health < 1) {
+			Debug.Log("You are dead");
+			gameObject.SetActive(false);
+			health = 100;
+		}
+		
 	}
 	void OnTriggerEnter(Collider expl) {
 		boom = (playerBody.transform.position - expl.transform.position).normalized * (1/Vector3.Distance(expl.transform.position, groundCheck.position)) * 2;
 		Debug.Log(boom.magnitude);
+		health -= (int)(boom.magnitude * 10f);
 		velocity.y = 0f;
 	}
 }

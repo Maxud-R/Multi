@@ -12,6 +12,7 @@ public class CameraMoving : MonoBehaviour {
 	private bool lockedCursor;
 	private Vector3 offset = new Vector3(0f, 1.1f, 0f);
 	public float mouseSens = 200f;
+	private Vector3 viewPoint = new Vector3(0f, 5f, 0f);
 	
 	public Transform cameraObject;
 	public GameObject target;
@@ -31,13 +32,24 @@ public class CameraMoving : MonoBehaviour {
 			CamRotationY += mouseX;
 			CamRotationX = Mathf.Clamp(CamRotationX, -90f, 90f);
 			cameraObject.localRotation = Quaternion.Euler(CamRotationX, CamRotationY, 0f);
-			target.transform.Rotate(Vector3.up * mouseX); //amis but easy
+			target.transform.Rotate(Vector3.up * mouseX);
 		} else {
 				Cursor.lockState = CursorLockMode.None;
 		}
+		
+		//player respawn
+		/**
+		if (!target.activeSelf) {
+			target.transform.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
+			target.SetActive(true);
+		}**/
 	}
 	void LateUpdate() {
-		//Camera motion
-		cameraObject.position = target.transform.position + offset;
+		//Camera positioning
+		if (target.activeSelf) {
+			cameraObject.position = target.transform.position + offset;
+		} else {
+			cameraObject.position = viewPoint;
+		}
 	}
 }

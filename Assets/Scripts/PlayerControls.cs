@@ -100,7 +100,6 @@ public class PlayerControls : MonoBehaviour
 	}
 	void OnTriggerEnter(Collider expl) {
 		boom = (playerBody.transform.position - expl.transform.position).normalized * (1/Vector3.Distance(expl.transform.position, groundCheck.position)) * 2;
-		Debug.Log(boom.magnitude);
 		health -= (int)(boom.magnitude * 10f);
 		velocity.y = 0f;
 	}

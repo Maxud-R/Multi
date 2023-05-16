@@ -22,6 +22,7 @@ public class PlayerControls : MonoBehaviour
 	
 	//other variables
 	public int health = 100;
+	public bool offline = false; //==true for starting from the game scene instead of lobby
 	
 	//camera variables
 	//delete if no err/private bool ActiveSwitch;
@@ -32,8 +33,7 @@ public class PlayerControls : MonoBehaviour
 	private CharacterController controller;
 	
 	//links
-	public GameObject bomb;
-	public Rigidbody bombPh;
+	public GameObject bombPref;
 	public Collider expl;
 	
 	void Start()
@@ -41,12 +41,12 @@ public class PlayerControls : MonoBehaviour
 		photonView = GetComponent<PhotonView>();
 		controller = GetComponent<CharacterController>();
 		playerBody = GetComponent<Transform>();
-		if (photonView.IsMine) gameObject.layer = 10;
+		if (photonView.IsMine || offline) gameObject.layer = 10;
 	}
 
 	void Update()
 	{
-		if (!photonView.IsMine) {
+		if (!photonView.IsMine && !offline) {
 			return;
 		}
 				
@@ -85,22 +85,26 @@ public class PlayerControls : MonoBehaviour
 		
 		//shooting
 		if (Input.GetMouseButtonDown(0)) {
-				Vector3 pos = playerBody.TransformPoint(new Vector3(1.4f, 0.5f, 1f));
-				bomb = PhotonNetwork.Instantiate("Bomb", pos, playerBody.rotation);
+				Vector3 pos = playerBody.TransformPoint(new Vector3(1.4f, .5f, 1f));
+				GameObject bomb;
+				if (!offline) {
+					bomb = PhotonNetwork.Instantiate(bombPref.name, pos, playerBody.rotation);
+				} else {
+					bomb = Instantiate(bombPref, pos, playerBody.rotation);
+				}
 				bomb.GetComponent<Rigidbody>().AddForce(bomb.transform.forward, ForceMode.Impulse);
 		}
 
 		//death
 		if (health < 1) {
 			Debug.Log("You are dead");
-			gameObject.SetActive(false);
-			health = 100;
+			Destroy(gameObject);
 		}
 		
 	}
 	void OnTriggerEnter(Collider expl) {
 		boom = (playerBody.transform.position - expl.transform.position).normalized * (1/Vector3.Distance(expl.transform.position, groundCheck.position)) * 2;
-		health -= (int)(boom.magnitude * 10f);
+		health -= (int)(boom.magnitude * 10f); //health after death may be negative
 		velocity.y = 0f;
 	}
 }

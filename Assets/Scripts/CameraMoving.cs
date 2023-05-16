@@ -7,14 +7,14 @@ public class CameraMoving : MonoBehaviour {
 	//camera variables
 	private float mouseX = 300f;
 	private float mouseY = 200f;
-	private float CamRotationX = 0f;
-	private float CamRotationY = 0f;
+	public float CamRotationX = 0f;
+	public float CamRotationY = 0f;
 	public bool lockedCursor;
 	private Vector3 offset = new Vector3(0f, 1.1f, 0f);
 	public float mouseSens = 200f;
 	private Vector3 viewPoint = new Vector3(0f, 5f, 0f);
 	
-	public Transform cameraObject;
+	//links
 	public GameObject target;
 	public GameObject panel;
 	
@@ -35,18 +35,18 @@ public class CameraMoving : MonoBehaviour {
 			CamRotationX -= mouseY;
 			CamRotationY += mouseX;
 			CamRotationX = Mathf.Clamp(CamRotationX, -90f, 90f);
-			cameraObject.localRotation = Quaternion.Euler(CamRotationX, CamRotationY, 0f);
-			target.transform.Rotate(Vector3.up * mouseX); //rotating player 
+			transform.localRotation = Quaternion.Euler(CamRotationX, CamRotationY, 0f);
+			if (target != null) target.transform.Rotate(Vector3.up * mouseX); //rotating player 
 		} else {
 				Cursor.lockState = CursorLockMode.None;
 		}
 	}
 	void LateUpdate() {
 		//Camera positioning
-		if (target.activeSelf) {
-			cameraObject.position = target.transform.position + offset;
+		if (target != null) {
+			transform.position = target.transform.position + offset;
 		} else { //if dead
-			cameraObject.position = viewPoint;
+			transform.position = viewPoint;
 		}
 	}
 }

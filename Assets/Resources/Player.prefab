@@ -113,8 +113,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   health: 100
-  bomb: {fileID: 7861684454895388517, guid: 65afe76da56a59f4caaa7b11066ab7f1, type: 3}
-  bombPh: {fileID: 0}
+  offline: 0
+  bombPref: {fileID: 7861684454895388517, guid: 65afe76da56a59f4caaa7b11066ab7f1,
+    type: 3}
   expl: {fileID: 0}
 --- !u!114 &139655337929867909
 MonoBehaviour:

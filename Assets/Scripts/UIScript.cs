@@ -7,7 +7,6 @@ public class UIScript : MonoBehaviour {
 	public Text hptext;
 	public GameObject player;
     void Update() {
-        hptext.text = player.GetComponent<PlayerControls>().health + "/100";
-        //if (Input.GetButtonDown("Cancel")) Debug.Log(.health);
+		if (player != null) hptext.text = player.GetComponent<PlayerControls>().health + "/100";
     }
 }

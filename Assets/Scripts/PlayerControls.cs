@@ -98,7 +98,7 @@ public class PlayerControls : MonoBehaviour
 		//death
 		if (health < 1) {
 			Debug.Log("You are dead");
-			Destroy(gameObject);
+			PhotonNetwork.Destroy(gameObject);
 		}
 		
 	}

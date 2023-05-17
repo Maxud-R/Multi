@@ -23,9 +23,6 @@ public class PlayerControls : MonoBehaviour
 	//other variables
 	public int health = 100;
 	public bool offline = false; //==true for starting from the game scene instead of lobby
-	
-	//camera variables
-	//delete if no err/private bool ActiveSwitch;
 		
 	//components
 	private Transform playerBody;
@@ -42,6 +39,7 @@ public class PlayerControls : MonoBehaviour
 		controller = GetComponent<CharacterController>();
 		playerBody = GetComponent<Transform>();
 		if (photonView.IsMine || offline) gameObject.layer = 10;
+		StartCoroutine(RareChecks());
 	}
 
 	void Update()
@@ -64,12 +62,7 @@ public class PlayerControls : MonoBehaviour
 		} else {
 			if (velocity.y > -15f) velocity.y -= gravity * Time.deltaTime;
 		}
-		//fall over from world protection
-		if (playerBody.position.y < -20f) {
-			Debug.Log("Eto fiasko bratan!");
-			playerBody.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
-			return;
-		}
+		
 		//Jumping
 		if (Input.GetButton("Jump") && isGrounded) {
 			velocity.y = +7f;
@@ -94,17 +87,28 @@ public class PlayerControls : MonoBehaviour
 				}
 				bomb.GetComponent<Rigidbody>().AddForce(bomb.transform.forward, ForceMode.Impulse);
 		}
-
-		//death
-		if (health < 1) {
-			Debug.Log("You are dead");
-			PhotonNetwork.Destroy(gameObject);
-		}
-		
 	}
-	void OnTriggerEnter(Collider expl) {
-		boom = (playerBody.transform.position - expl.transform.position).normalized * (1/Vector3.Distance(expl.transform.position, groundCheck.position)) * 2;
-		health -= (int)(boom.magnitude * 10f); //health after death may be negative
-		velocity.y = 0f;
+	void OnTriggerEnter(Collider other) {
+		//calculating pushing vector and applying health damage
+		if (other.name == expl.name+"(Clone)") {
+			boom = (playerBody.transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
+			health -= (int)(boom.magnitude * 10f); //health after death may be negative
+			velocity.y = 0f;
+		}
+	}
+	IEnumerator RareChecks() {
+		for (;;) {
+			//fall over from world protection
+			if (playerBody.position.y < -20f) {
+				Debug.Log("Eto fiasko bratan!");
+				playerBody.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
+			}
+			//death
+			if (health < 1) {
+				Debug.Log("You are dead");
+				PhotonNetwork.Destroy(gameObject);
+			}
+			yield return new WaitForSeconds(.3f);
+		}
 	}
 }

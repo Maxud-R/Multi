@@ -5,11 +5,16 @@ using Photon.Pun;
 
 public class BombBehavior : MonoBehaviour {
 	public GameObject expl;
-    void Start() {
-		Destroy(gameObject, 2f); //this bomb will be destroyed in 2 seconds
+	
+	void Start() {
+		StartCoroutine(Delay());
+	}
+    IEnumerator Delay() {
+		yield return new WaitForSeconds(2f);
+		PhotonNetwork.Destroy(gameObject); //this bomb will be destroyed in 2 seconds
     }
     void OnDestroy() {
-		//bug when new player joined all bombs whenever spawned are exist on scene. Rewrite as timer and photon.destroy 
+		//explosion doesn't have photonView, unity destroy is ok
 		Destroy(Instantiate(expl, transform.position, Quaternion.identity), .1f); //destroy explosion after 0.1 second
 	}
 }

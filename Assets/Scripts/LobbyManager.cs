@@ -6,6 +6,7 @@ using Photon.Pun;
 
 public class LobbyManager : MonoBehaviourPunCallbacks {
 	public Text LogText;
+	public InputField nickField;
     // Start is called before the first frame update
     void Start() {
 		PhotonNetwork.AutomaticallySyncScene = true;
@@ -31,5 +32,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
     private void Log(string message) {
 		Debug.Log(message);
 		LogText.text += "\n" + message;
+	}
+	public void ApplyNickname() {
+		PhotonNetwork.NickName = nickField.text;
+		Log("Your name is set to: " + PhotonNetwork.NickName);
 	}
 }

@@ -28,6 +28,7 @@ public class PlayerControls : MonoBehaviour
 	private Transform playerBody;
 	private PhotonView photonView;
 	private CharacterController controller;
+	private GameObject cam;
 	
 	//links
 	public GameObject bombPref;
@@ -38,6 +39,7 @@ public class PlayerControls : MonoBehaviour
 		photonView = GetComponent<PhotonView>();
 		controller = GetComponent<CharacterController>();
 		playerBody = GetComponent<Transform>();
+		cam = GameObject.FindWithTag("MainCamera");
 		if (photonView.IsMine || offline) gameObject.layer = 10;
 		StartCoroutine(RareChecks());
 	}
@@ -85,7 +87,7 @@ public class PlayerControls : MonoBehaviour
 				} else {
 					bomb = Instantiate(bombPref, pos, playerBody.rotation);
 				}
-				bomb.GetComponent<Rigidbody>().AddForce(bomb.transform.forward, ForceMode.Impulse);
+				bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+new Vector3(0f, .5f, 0f), ForceMode.Impulse);
 		}
 	}
 	void OnTriggerEnter(Collider other) {
@@ -101,6 +103,7 @@ public class PlayerControls : MonoBehaviour
 			//fall over from world protection
 			if (playerBody.position.y < -20f) {
 				Debug.Log("Eto fiasko bratan!");
+				move = Vector3.zero; /*check this works*/
 				playerBody.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
 			}
 			//death

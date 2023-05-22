@@ -5,9 +5,10 @@ using UnityEngine.UI;
 using Photon.Pun;
 
 public class LobbyManager : MonoBehaviourPunCallbacks {
+	//in-editor defined links
 	public Text LogText;
 	public InputField nickField;
-    // Start is called before the first frame update
+	
     void Start() {
 		PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.NickName = "Player " + Random.Range(1000, 10000);

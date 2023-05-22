@@ -9,7 +9,7 @@ using Photon.Realtime;
 
 public class ManagerGame : MonoBehaviourPunCallbacks
 {
-	//links
+	//in-editor defined links
     public GameObject PlayerPrefab;
     public GameObject uiCanvas;
     
@@ -24,7 +24,7 @@ public class ManagerGame : MonoBehaviourPunCallbacks
 	}
 	public void SpawnMe() {
 		Vector3 pos = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
-		MyPlayer = PhotonNetwork.Instantiate(PlayerPrefab.name, pos, Quaternion.identity);
+		if (PhotonNetwork.InRoom) MyPlayer = PhotonNetwork.Instantiate(PlayerPrefab.name, pos, Quaternion.identity);
 		if (MyPlayer == null) {
 			MyPlayer = Instantiate(PlayerPrefab, pos, Quaternion.identity);
 			MyPlayer.GetComponent<PlayerControls>().offline = true;
@@ -35,6 +35,8 @@ public class ManagerGame : MonoBehaviourPunCallbacks
 		followScript.CamRotationY = 0f;
 		followScript.target = MyPlayer;
 		uiCanvas.GetComponent<UIScript>().player = MyPlayer;
+		MyPlayer.GetComponent<PlayerControls>().uiscr = uiCanvas.GetComponent<UIScript>();
+		
 	}
 	public void Leave() {
 		PhotonNetwork.LeaveRoom();

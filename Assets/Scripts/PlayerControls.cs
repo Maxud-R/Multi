@@ -24,15 +24,16 @@ public class PlayerControls : MonoBehaviour
 	public int health = 100;
 	public bool offline = false; //==true for starting from the game scene instead of lobby
 		
-	//components
+	//in-script defined links
 	private Transform playerBody;
 	private PhotonView photonView;
 	private CharacterController controller;
 	private GameObject cam;
 	
-	//links
+	//in-editor defined links
 	public GameObject bombPref;
 	public Collider expl;
+	public UIScript uiscr;
 	
 	void Start()
 	{
@@ -79,7 +80,7 @@ public class PlayerControls : MonoBehaviour
 		controller.Move(move * speed * Time.deltaTime + velocity * Time.deltaTime + boom);
 		
 		//shooting
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
 				Vector3 pos = playerBody.TransformPoint(new Vector3(1.4f, .5f, 1f));
 				GameObject bomb;
 				if (!offline) {

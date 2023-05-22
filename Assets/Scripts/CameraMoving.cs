@@ -14,21 +14,23 @@ public class CameraMoving : MonoBehaviour {
 	public float mouseSens = 200f;
 	private Vector3 viewPoint = new Vector3(0f, 5f, 0f);
 	
-	//links
+	//in-script defined links
 	public GameObject target;
-	public GameObject panel;
 	
+	//in-editor defined links 
+	public UIScript uiscr;
+
 	void Start() {
-		lockedCursor = true;
+		//
 	}
-	void Update() {
-		//cursor lock
+	void Update() {/**
+		//cursor lock 
 		if (Input.GetButtonDown("Cancel") && Application.isFocused) lockedCursor = !lockedCursor;
 		if (lockedCursor && !Application.isFocused) lockedCursor = false;
 		//menu
-		if (lockedCursor == panel.activeSelf) panel.SetActive(!lockedCursor);
+		if (lockedCursor == panel.activeSelf) panel.SetActive(!lockedCursor);**/
 		//Camera rotation
-		if (lockedCursor) {
+		if (uiscr.lockedCursor) {
 			if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Locked;
 			mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
 			mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;

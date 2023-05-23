@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-//using Photon.Realtime;
+//TODO: chat overflow, limit to messages and set chat start from newest.
 
 public class UIScript : MonoBehaviour {
 	//owned variables
@@ -39,6 +39,10 @@ public class UIScript : MonoBehaviour {
 		if (lockedCursor && !Application.isFocused) lockedCursor = false;
 		if (lockedCursor == panel.activeSelf) {
 			panel.SetActive(!lockedCursor);
+		}
+		if (panel.activeSelf && Input.GetButtonDown("Submit") && !chatInputField.isFocused) {
+			chatInputField.Select();
+			chatInputField.ActivateInputField();
 		}
 	}
     IEnumerator RareChecks() {

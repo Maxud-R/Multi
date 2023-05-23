@@ -21,7 +21,10 @@ public class UIScript : MonoBehaviour {
 	public GameObject panel;
 	public Text hptext;
 	public Text desc;
+	public Text chatText;
 	public Image hbar;
+	public ChatScript chscr;
+	public InputField chatInputField;
 	
     void Start() {
 		lockedCursor = true;
@@ -41,6 +44,11 @@ public class UIScript : MonoBehaviour {
     IEnumerator RareChecks() {
 		bool playerDead = false;
 		for (;;) {
+			//chatUpdate
+			chatText.text = "";
+		    foreach(string x in chscr.messages) {
+     			chatText.text += "\n"+x;
+			}
 			//HealthUpdate
 			if (player != null) {
 				if (playerDead) {
@@ -67,5 +75,9 @@ public class UIScript : MonoBehaviour {
 			}
 			yield return new WaitForSeconds(.3f);
 		}
+	}
+	public void ChatInputSend() {
+		chscr.inputLine = chatInputField.text;
+		chatInputField.text = "";
 	}
 }

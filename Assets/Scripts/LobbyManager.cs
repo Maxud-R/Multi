@@ -8,10 +8,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
 	//in-editor defined links
 	public Text LogText;
 	public InputField nickField;
+	private static string nickname;
 	
     void Start() {
 		PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.NickName = "Player " + Random.Range(1000, 10000);
+		if (string.IsNullOrEmpty(nickname)) nickname = "Player " + Random.Range(1000, 10000);
+		PhotonNetwork.NickName = nickname;
         Log("Your name is set to: " + PhotonNetwork.NickName + "\nWait until connecting to main matchmaking server...");
         PhotonNetwork.GameVersion = "1";
         PhotonNetwork.ConnectUsingSettings();
@@ -36,6 +38,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
 	}
 	public void ApplyNickname() {
 		PhotonNetwork.NickName = nickField.text;
+		nickname = nickField.text;
 		Log("Your name is set to: " + PhotonNetwork.NickName);
 	}
 }

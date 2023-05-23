@@ -147,9 +147,9 @@ RectTransform:
   m_Father: {fileID: 727812924}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -69.5, y: 66.6}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 215, y: 59}
   m_SizeDelta: {x: 118.99432, y: 178.78952}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &47813416
@@ -533,8 +533,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 278, y: -1}
-  m_SizeDelta: {x: 469.1081, y: 358.30106}
+  m_AnchoredPosition: {x: 300.1, y: -1.1}
+  m_SizeDelta: {x: 494.02716, y: 341.27475}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &727812923
 GameObject:
@@ -1318,13 +1318,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1421306725}
   m_TextComponent: {fileID: 1415203132}
   m_Placeholder: {fileID: 823467171}
-  m_ContentType: 5
+  m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 6
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 4
+  m_CharacterValidation: 0
   m_CharacterLimit: 15
   m_OnEndEdit:
     m_PersistentCalls:

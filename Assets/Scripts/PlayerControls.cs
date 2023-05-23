@@ -35,8 +35,7 @@ public class PlayerControls : MonoBehaviour
 	public Collider expl;
 	public UIScript uiscr;
 	
-	void Start()
-	{
+	void Start() {
 		photonView = GetComponent<PhotonView>();
 		controller = GetComponent<CharacterController>();
 		playerBody = GetComponent<Transform>();
@@ -45,8 +44,7 @@ public class PlayerControls : MonoBehaviour
 		StartCoroutine(RareChecks());
 	}
 
-	void Update()
-	{
+	void Update() {
 		if (!photonView.IsMine && !offline) {
 			return;
 		}
@@ -56,7 +54,7 @@ public class PlayerControls : MonoBehaviour
 				
 		xAxis = Input.GetAxis("Horizontal");
 		zAxis = Input.GetAxis("Vertical");
-		move = playerBody.right * xAxis + playerBody.forward * zAxis;
+		if (uiscr.lockedCursor) move = playerBody.right * xAxis + playerBody.forward * zAxis;
 				
 		//gravity and vertical speed of the player
 		if (isGrounded && velocity.y < 0f) {
@@ -67,7 +65,7 @@ public class PlayerControls : MonoBehaviour
 		}
 		
 		//Jumping
-		if (Input.GetButton("Jump") && isGrounded) {
+		if (Input.GetButton("Jump") && isGrounded && uiscr.lockedCursor) {
 			velocity.y = +7f;
 		}
 		

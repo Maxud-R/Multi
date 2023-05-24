@@ -37,8 +37,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
 		LogText.text += "\n" + message;
 	}
 	public void ApplyNickname() {
-		PhotonNetwork.NickName = nickField.text;
-		nickname = nickField.text;
-		Log("Your name is set to: " + PhotonNetwork.NickName);
+		if (nickField.text != "") {
+			PhotonNetwork.NickName = nickField.text;
+			nickname = nickField.text;
+			Log("Your name is set to: " + PhotonNetwork.NickName);
+		}
 	}
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-//TODO: chat overflow, limit to messages and set chat start from newest.
 
 public class UIScript : MonoBehaviour {
 	//owned variables

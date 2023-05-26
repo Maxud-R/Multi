@@ -7,7 +7,6 @@ public class PlayerControls : MonoBehaviour
 {
 	//gravity variables
 	public Transform groundCheck;
-	private float groundDistance = 0.2f;
 	public LayerMask groundMask;
 	private bool isGrounded;
 	
@@ -15,7 +14,7 @@ public class PlayerControls : MonoBehaviour
 	private float xAxis = 0f;
 	private float zAxis = 0f;
 	private Vector3 move;
-	private Vector3 velocity;
+	public Vector3 velocity;
 	private float speed = 6f;
 	private float gravity = 15f;
 	private Vector3 boom;
@@ -42,6 +41,7 @@ public class PlayerControls : MonoBehaviour
 		cam = GameObject.FindWithTag("MainCamera");
 		if (photonView.IsMine || offline) gameObject.layer = 10;
 		StartCoroutine(RareChecks());
+		Debug.Log(groundCheck.localScale.x);
 	}
 
 	void Update() {
@@ -50,18 +50,18 @@ public class PlayerControls : MonoBehaviour
 		}
 				
 		//Moving calculation
-		isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/4, groundMask);
 				
 		xAxis = Input.GetAxis("Horizontal");
 		zAxis = Input.GetAxis("Vertical");
 		if (uiscr.lockedCursor) move = playerBody.right * xAxis + playerBody.forward * zAxis;
 				
 		//gravity and vertical speed of the player
-		if (isGrounded && velocity.y < 0f) {
-			velocity.y = -2f;
-				
+		if (isGrounded/* && velocity.y < 0f*/) {
+			velocity.y = 0f;	//don't calculate gravity from groundcheck, but from moving of controller TODO
 		} else {
-			if (velocity.y > -15f) velocity.y -= gravity * Time.deltaTime;
+			if (velocity.y == 0f) velocity.y = -2f;
+			if (velocity.y > -20f) velocity.y -= gravity * Time.deltaTime;
 		}
 		
 		//Jumping
@@ -69,8 +69,8 @@ public class PlayerControls : MonoBehaviour
 			velocity.y = +7f;
 		}
 		
-		//Bomb blast pushing
-		if (boom.magnitude > 0.01f) {
+		//Bomb blast pushing vector
+		if (boom.magnitude > .01f) {
 			boom = boom / 1.1f;
 		} else boom = Vector3.zero;
 				
@@ -102,12 +102,14 @@ public class PlayerControls : MonoBehaviour
 			//fall over from world protection
 			if (playerBody.position.y < -20f) {
 				Debug.Log("Eto fiasko bratan!");
-				move = Vector3.zero; /*check this works*/
+				uiscr.ChatSystemSend("poznal chto est' fiasko");
+				move = Vector3.zero;
 				playerBody.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
 			}
 			//death
 			if (health < 1) {
 				Debug.Log("You are dead");
+				uiscr.ChatSystemSend("dead.");
 				PhotonNetwork.Destroy(gameObject);
 			}
 			yield return new WaitForSeconds(.3f);

@@ -83,4 +83,7 @@ public class UIScript : MonoBehaviour {
 		chscr.inputLine = chatInputField.text;
 		chatInputField.text = "";
 	}
+	public void ChatSystemSend(string msg) {
+		chscr.inputLine = $"[system]:{msg}";
+	}
 }

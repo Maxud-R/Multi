@@ -112,6 +112,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 512
+  velocity: {x: 0, y: 0, z: 0}
   health: 100
   offline: 0
   bombPref: {fileID: 7861684454895388517, guid: 65afe76da56a59f4caaa7b11066ab7f1,
@@ -200,8 +201,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4012123810178156321}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.89, z: 0}
-  m_LocalScale: {x: 1.2113279, y: 1.2113279, z: 1.2113279}
+  m_LocalPosition: {x: 0, y: -2.34, z: 0}
+  m_LocalScale: {x: 1.9, y: 1.9, z: 1.9}
   m_Children: []
   m_Father: {fileID: 6868012786506478682}
   m_RootOrder: 0

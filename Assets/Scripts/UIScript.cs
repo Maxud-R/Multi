@@ -35,7 +35,12 @@ public class UIScript : MonoBehaviour {
     void Update () {
 		//cursor lock & in-game menu show
 		if (Input.GetButtonDown("Cancel") && Application.isFocused) lockedCursor = !lockedCursor;
-		if (lockedCursor && !Application.isFocused) lockedCursor = false;
+		if (lockedCursor){
+			if (!Application.isFocused) lockedCursor = false;
+			if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Locked;
+		} else {
+			Cursor.lockState = CursorLockMode.None;
+		}
 		if (lockedCursor == panel.activeSelf) {
 			panel.SetActive(!lockedCursor);
 		}

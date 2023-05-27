@@ -31,7 +31,6 @@ public class CameraMoving : MonoBehaviour {
 		if (lockedCursor == panel.activeSelf) panel.SetActive(!lockedCursor);**/
 		//Camera rotation
 		if (uiscr.lockedCursor) {
-			if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Locked;
 			mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
 			mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;
 			CamRotationX -= mouseY;
@@ -39,8 +38,6 @@ public class CameraMoving : MonoBehaviour {
 			CamRotationX = Mathf.Clamp(CamRotationX, -90f, 90f);
 			transform.localRotation = Quaternion.Euler(CamRotationX, CamRotationY, 0f);
 			if (target != null) target.transform.Rotate(Vector3.up * mouseX); //rotating player 
-		} else {
-				Cursor.lockState = CursorLockMode.None;
 		}
 	}
 	void LateUpdate() {

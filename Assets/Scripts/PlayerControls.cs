@@ -13,15 +13,19 @@ public class PlayerControls : MonoBehaviour
 	//moving variables
 	private float xAxis = 0f;
 	private float zAxis = 0f;
-	private Vector3 move;
+	public Vector3 move;
 	public Vector3 velocity;
 	private float speed = 6f;
-	private float gravity = 15f;
+	private float vSpeed = 0f;
+	private float gravity = .25f;
 	private Vector3 boom;
 	
 	//other variables
 	public int health = 100;
 	public bool offline = false; //==true for starting from the game scene instead of lobby
+	//debug var
+	public bool scrgr;
+	public bool contgr;
 		
 	//in-script defined links
 	private Transform playerBody;
@@ -41,33 +45,31 @@ public class PlayerControls : MonoBehaviour
 		cam = GameObject.FindWithTag("MainCamera");
 		if (photonView.IsMine || offline) gameObject.layer = 10;
 		StartCoroutine(RareChecks());
-		Debug.Log(groundCheck.localScale.x);
 	}
 
 	void Update() {
 		if (!photonView.IsMine && !offline) {
 			return;
 		}
-				
-		//Moving calculation
-		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/4, groundMask);
-				
+		//horizontal moving
 		xAxis = Input.GetAxis("Horizontal");
 		zAxis = Input.GetAxis("Vertical");
-		if (uiscr.lockedCursor) move = playerBody.right * xAxis + playerBody.forward * zAxis;
-				
-		//gravity and vertical speed of the player
-		if (isGrounded/* && velocity.y < 0f*/) {
-			velocity.y = 0f;	//don't calculate gravity from groundcheck, but from moving of controller TODO
-		} else {
-			if (velocity.y == 0f) velocity.y = -2f;
-			if (velocity.y > -20f) velocity.y -= gravity * Time.deltaTime;
-		}
+		if (uiscr.lockedCursor) move = (playerBody.right * xAxis + playerBody.forward * zAxis) * speed * Time.deltaTime;
+		else move = Vector3.zero;
 		
-		//Jumping
-		if (Input.GetButton("Jump") && isGrounded && uiscr.lockedCursor) {
-			velocity.y = +7f;
+		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/4, groundMask);
+		scrgr = this.isGrounded;
+		contgr = controller.isGrounded;
+		if (this.isGrounded) {
+			vSpeed = -gravity;
+		} else {
+			if (controller.velocity.y > -30f) vSpeed -= gravity;
 		}
+		//Jumping
+		if (Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
+			vSpeed = +7f;
+		}
+		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
 		
 		//Bomb blast pushing vector
 		if (boom.magnitude > .01f) {
@@ -75,7 +77,8 @@ public class PlayerControls : MonoBehaviour
 		} else boom = Vector3.zero;
 				
 		//Applying move
-		controller.Move(move * speed * Time.deltaTime + velocity * Time.deltaTime + boom);
+		move.y = vSpeed * Time.deltaTime;
+		controller.Move(move + boom);
 		
 		//shooting
 		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
@@ -88,6 +91,10 @@ public class PlayerControls : MonoBehaviour
 				}
 				bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+new Vector3(0f, .5f, 0f), ForceMode.Impulse);
 		}
+	}
+	void OnControllerColliderHit(ControllerColliderHit hit) {
+		//preventing sticking to walls
+		if (controller.isGrounded && !this.isGrounded) controller.Move((groundCheck.position - hit.point)*Time.deltaTime);
 	}
 	void OnTriggerEnter(Collider other) {
 		//calculating pushing vector and applying health damage

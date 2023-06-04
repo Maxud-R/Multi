@@ -112,9 +112,12 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 512
+  move: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
   health: 100
   offline: 0
+  scrgr: 0
+  contgr: 0
   bombPref: {fileID: 7861684454895388517, guid: 65afe76da56a59f4caaa7b11066ab7f1,
     type: 3}
   expl: {fileID: 7293879391027156179, guid: b796c3f8305553c4aa6e46b29b42c086, type: 3}

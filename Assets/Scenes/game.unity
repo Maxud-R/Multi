@@ -441,7 +441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cd6d85e7d4cf44995d2a4f1f15af8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 2839114042026689521, guid: fb3936d1249d3514aaee49f9ec4c7d28,
+  PlayerPrefab: {fileID: 3890729147556752011, guid: b3142090631bf2e4a85bde8c726af9c9,
     type: 3}
   uiCanvas: {fileID: 1238209331}
 --- !u!4 &93064146
@@ -4305,7 +4305,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: 41df4f5c247dba5478ec8573070aa1dc, type: 3}
       propertyPath: m_Name
-      value: player
+      value: playerStatue
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 41df4f5c247dba5478ec8573070aa1dc, type: 3}
       propertyPath: m_TagString

@@ -57,7 +57,7 @@ public class PlayerControls : MonoBehaviour
 		if (uiscr.lockedCursor) move = (playerBody.right * xAxis + playerBody.forward * zAxis) * speed * Time.deltaTime;
 		else move = Vector3.zero;
 		
-		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/4, groundMask);
+		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
 		scrgr = this.isGrounded;
 		contgr = controller.isGrounded;
 		if (this.isGrounded) {

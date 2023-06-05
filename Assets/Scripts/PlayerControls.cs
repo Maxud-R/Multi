@@ -28,7 +28,6 @@ public class PlayerControls : MonoBehaviour
 	public bool contgr;*/
 		
 	//in-script defined links
-	private Transform playerBody;
 	private PhotonView photonView;
 	private CharacterController controller;
 	private GameObject cam;
@@ -42,10 +41,9 @@ public class PlayerControls : MonoBehaviour
 	void Start() {
 		photonView = GetComponent<PhotonView>();
 		controller = GetComponent<CharacterController>();
-		playerBody = GetComponent<Transform>();
 		animator = GetComponentInChildren<Animator>();
 		cam = GameObject.FindWithTag("MainCamera");
-		if (photonView.IsMine || offline) gameObject.layer = 10;
+		if (photonView.IsMine || offline) transform.GetChild(1).GetChild(1).gameObject.layer = 10;
 		StartCoroutine(RareChecks());
 	}
 
@@ -56,7 +54,7 @@ public class PlayerControls : MonoBehaviour
 		//horizontal moving
 		xAxis = Input.GetAxis("Horizontal");
 		zAxis = Input.GetAxis("Vertical");
-		if (uiscr.lockedCursor) move = (playerBody.right * xAxis + playerBody.forward * zAxis) * speed * Time.deltaTime;
+		if (uiscr.lockedCursor) move = (transform.right * xAxis + transform.forward * zAxis) * speed * Time.deltaTime;
 		else move = Vector3.zero;
 		
 		//animation
@@ -87,12 +85,12 @@ public class PlayerControls : MonoBehaviour
 		
 		//shooting
 		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
-				Vector3 pos = playerBody.TransformPoint(new Vector3(1.4f, .5f, 1f));
+				Vector3 pos = transform.TransformPoint(new Vector3(.85f, .2f, 1f));
 				GameObject bomb;
 				if (!offline) {
-					bomb = PhotonNetwork.Instantiate(bombPref.name, pos, playerBody.rotation);
+					bomb = PhotonNetwork.Instantiate(bombPref.name, pos, transform.rotation);
 				} else {
-					bomb = Instantiate(bombPref, pos, playerBody.rotation);
+					bomb = Instantiate(bombPref, pos, transform.rotation);
 				}
 				bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+new Vector3(0f, .5f, 0f), ForceMode.Impulse);
 		}
@@ -104,7 +102,7 @@ public class PlayerControls : MonoBehaviour
 	void OnTriggerEnter(Collider other) {
 		//calculating pushing vector and applying health damage
 		if (other.name == expl.name+"(Clone)") {
-			boom = (playerBody.transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
+			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
 			health -= (int)(boom.magnitude * 10f); //health after death may be negative
 			velocity.y = 0f;
 		}
@@ -112,11 +110,11 @@ public class PlayerControls : MonoBehaviour
 	IEnumerator RareChecks() {
 		for (;;) {
 			//fall over from world protection
-			if (playerBody.position.y < -20f) {
+			if (transform.position.y < -20f) {
 				Debug.Log("Eto fiasko bratan!");
 				uiscr.ChatSystemSend("poznal chto est' fiasko");
 				move = Vector3.zero;
-				playerBody.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
+				transform.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
 			}
 			//death
 			if (health < 1) {

@@ -24,14 +24,15 @@ public class PlayerControls : MonoBehaviour
 	public int health = 100;
 	public bool offline = false; //==true for starting from the game scene instead of lobby
 	//debug var
-	public bool scrgr;
-	public bool contgr;
+/*  public bool scrgr;
+	public bool contgr;*/
 		
 	//in-script defined links
 	private Transform playerBody;
 	private PhotonView photonView;
 	private CharacterController controller;
 	private GameObject cam;
+	private Animator animator;
 	
 	//in-editor defined links
 	public GameObject bombPref;
@@ -42,6 +43,7 @@ public class PlayerControls : MonoBehaviour
 		photonView = GetComponent<PhotonView>();
 		controller = GetComponent<CharacterController>();
 		playerBody = GetComponent<Transform>();
+		animator = GetComponentInChildren<Animator>();
 		cam = GameObject.FindWithTag("MainCamera");
 		if (photonView.IsMine || offline) gameObject.layer = 10;
 		StartCoroutine(RareChecks());
@@ -57,9 +59,12 @@ public class PlayerControls : MonoBehaviour
 		if (uiscr.lockedCursor) move = (playerBody.right * xAxis + playerBody.forward * zAxis) * speed * Time.deltaTime;
 		else move = Vector3.zero;
 		
+		//animation
+		if (move != Vector3.zero) animator.SetBool("isWalking", true);
+		else animator.SetBool("isWalking", false);
+		
+		//gravity and ground
 		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
-		scrgr = this.isGrounded;
-		contgr = controller.isGrounded;
 		if (this.isGrounded) {
 			vSpeed = -gravity;
 		} else {

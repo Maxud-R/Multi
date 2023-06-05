@@ -89,6 +89,7 @@ public class UIScript : MonoBehaviour {
 		chatInputField.text = "";
 	}
 	public void ChatSystemSend(string msg) {
-		chscr.inputLine = $"[system]:{msg}";
+		if (!playerScript.offline) chscr.inputLine = $"[system]:{msg}";
+		else chscr.messages.Add($"[system]:{msg}");
 	}
 }

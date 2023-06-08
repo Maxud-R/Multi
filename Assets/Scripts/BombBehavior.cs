@@ -15,6 +15,6 @@ public class BombBehavior : MonoBehaviour {
     }
     void OnDestroy() {
 		//explosion doesn't have photonView, unity destroy is ok
-		Destroy(Instantiate(expl, transform.position, Quaternion.identity), .1f); //destroy explosion after 0.1 second
+		Destroy(Instantiate(expl, transform.position, Quaternion.identity), 1f); //destroy explosion after 0.1 second
 	}
 }

@@ -10,11 +10,13 @@ public class BombBehavior : MonoBehaviour {
 		StartCoroutine(Delay());
 	}
     IEnumerator Delay() {
-		yield return new WaitForSeconds(2f);
+		yield return new WaitForSeconds(2f); //not needed to stop, it is automatically when destroy;
 		PhotonNetwork.Destroy(gameObject); //this bomb will be destroyed in 2 seconds
     }
     void OnDestroy() {
 		//explosion doesn't have photonView, unity destroy is ok
-		Destroy(Instantiate(expl, transform.position, Quaternion.identity), 1f); //destroy explosion after 0.1 second
+		var blast = Instantiate(expl, transform.position, Quaternion.identity);
+		Destroy(blast.transform.GetChild(0).gameObject, .1f); //shockwawe
+		Destroy(blast, 1f); //destroy whole object (particles) after 1 second
 	}
 }

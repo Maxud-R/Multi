@@ -32,10 +32,11 @@ public class PlayerControls : MonoBehaviour
 	private CharacterController controller;
 	private GameObject cam;
 	private Animator animator;
+	private string explName;
 	
 	//in-editor defined links
 	public GameObject bombPref;
-	public Collider expl;
+	public GameObject expl;
 	public UIScript uiscr;
 	
 	void Start() {
@@ -43,6 +44,7 @@ public class PlayerControls : MonoBehaviour
 		controller = GetComponent<CharacterController>();
 		animator = GetComponentInChildren<Animator>();
 		cam = GameObject.FindWithTag("MainCamera");
+		explName = expl.transform.GetChild(0).name;
 		if (photonView.IsMine || offline) transform.GetChild(1).GetChild(1).gameObject.layer = 10;
 		StartCoroutine(RareChecks());
 	}
@@ -101,7 +103,7 @@ public class PlayerControls : MonoBehaviour
 	}
 	void OnTriggerEnter(Collider other) {
 		//calculating pushing vector and applying health damage
-		if (other.name == expl.name+"(Clone)") {
+		if (other.name == explName) {
 			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
 			health -= (int)(boom.magnitude * 10f); //health after death may be negative
 			velocity.y = 0f;

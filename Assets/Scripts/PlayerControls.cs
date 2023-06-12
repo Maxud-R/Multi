@@ -17,14 +17,14 @@ public class PlayerControls : MonoBehaviour
 	public Vector3 velocity;
 	private float speed = 6f;
 	private float vSpeed = 0f;
-	private float gravity = .25f;
+	private float gravity = .3f;
 	private Vector3 boom;
 	
 	//other variables
 	public int health = 100;
-	public bool offline = false; //==true for starting from the game scene instead of lobby
+	public bool offline = false;
 	//debug var
-/*  public bool scrgr;
+	/*public bool scrgr;
 	public bool contgr;*/
 		
 	//in-script defined links
@@ -65,24 +65,26 @@ public class PlayerControls : MonoBehaviour
 		
 		//gravity and ground
 		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
+		/*scrgr = isGrounded;
+		contgr = controller.isGrounded;*/
 		if (this.isGrounded) {
-			vSpeed = -gravity;
+			vSpeed = -gravity/10;
 		} else {
-			if (controller.velocity.y > -30f) vSpeed -= gravity;
+			if (controller.velocity.y > -30f) vSpeed -= gravity * Time.deltaTime;
 		}
 		//Jumping
 		if (Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
-			vSpeed = +7f;
+			vSpeed = gravity/2f;
 		}
 		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
 		
 		//Bomb blast pushing vector
-		if (boom.magnitude > .01f) {
-			boom = boom / 1.1f;
+		if (boom.magnitude > .003f) {
+			boom = boom / 1.05f;
 		} else boom = Vector3.zero;
 				
 		//Applying move
-		move.y = vSpeed * Time.deltaTime;
+		move.y = vSpeed;
 		controller.Move(move + boom);
 		
 		//shooting

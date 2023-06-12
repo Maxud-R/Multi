@@ -37,9 +37,13 @@ public class UIScript : MonoBehaviour {
 		if (Input.GetButtonDown("Cancel") && Application.isFocused) lockedCursor = !lockedCursor;
 		if (lockedCursor){
 			if (!Application.isFocused) lockedCursor = false;
-			if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Locked;
+			if (Cursor.lockState == CursorLockMode.None) {
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+			}
 		} else {
 			Cursor.lockState = CursorLockMode.None;
+			if (!Cursor.visible) Cursor.visible = true;
 		}
 		if (lockedCursor == panel.activeSelf) {
 			panel.SetActive(!lockedCursor);

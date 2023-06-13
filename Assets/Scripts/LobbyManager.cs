@@ -43,4 +43,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
 			Log("Your name is set to: " + PhotonNetwork.NickName);
 		}
 	}
+	public void Quit() {
+		Application.Quit();
+	}
 }

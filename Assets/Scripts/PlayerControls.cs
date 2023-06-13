@@ -17,15 +17,19 @@ public class PlayerControls : MonoBehaviour
 	public Vector3 velocity;
 	private float speed = 6f;
 	private float vSpeed = 0f;
-	private float gravity = .3f;
+	private float gravity = .005f;
 	private Vector3 boom;
 	
 	//other variables
 	public int health = 100;
 	public bool offline = false;
+	
 	//debug var
-	/*public bool scrgr;
-	public bool contgr;*/
+	public bool scrgr;
+	public bool contgr;
+	private float jumpTime;
+	private float jumpHeight;
+	private bool jumpStart;
 		
 	//in-script defined links
 	private PhotonView photonView;
@@ -65,21 +69,35 @@ public class PlayerControls : MonoBehaviour
 		
 		//gravity and ground
 		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
-		/*scrgr = isGrounded;
-		contgr = controller.isGrounded;*/
+		//*****gravity debug section*****
+		scrgr = isGrounded;
+		contgr = controller.isGrounded;
+		
+		if (jumpStart) {
+			jumpTime += Time.deltaTime;
+			if (jumpHeight < groundCheck.transform.position.y) jumpHeight = groundCheck.transform.position.y;
+			if (this.isGrounded) {
+				jumpStart = false;
+				uiscr.ChatSystemSend($"jumpTime:{jumpTime}, Height: {jumpHeight}, {1/Time.deltaTime} FPS");
+				jumpTime = 0;
+				jumpHeight = 0;
+			}
+		}
+		//*****gravity debug section ENDS*****
 		if (this.isGrounded) {
-			vSpeed = -gravity/10;
+			vSpeed = -0.005f;
 		} else {
-			if (controller.velocity.y > -30f) vSpeed -= gravity * Time.deltaTime;
+			if (controller.velocity.y > -30f) vSpeed -= gravity;
 		}
 		//Jumping
-		if (Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
-			vSpeed = gravity/2f;
+		if (vSpeed < 0 && Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
+			vSpeed = gravity*30f;
+			jumpStart = true; //delete
 		}
-		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
+		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -0.005f;
 		
 		//Bomb blast pushing vector
-		if (boom.magnitude > .003f) {
+		if (boom.magnitude > .007f) {
 			boom = boom / 1.05f;
 		} else boom = Vector3.zero;
 				

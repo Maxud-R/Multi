@@ -95,5 +95,6 @@ public class UIScript : MonoBehaviour {
 	public void ChatSystemSend(string msg) {
 		if (!playerScript.offline) chscr.inputLine = $"[system]:{msg}";
 		else chscr.messages.Add($"[system]:{msg}");
+		if (chscr.messages.Count > chscr.messagesLimit) chscr.messages.RemoveAt(0);
 	}
 }

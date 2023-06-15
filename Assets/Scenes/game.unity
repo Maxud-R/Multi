@@ -6134,6 +6134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   messages: []
   inputLine: 
+  messagesLimit: 24
   uiscr: {fileID: 1238209336}
 --- !u!114 &1583245675
 MonoBehaviour:

@@ -14,21 +14,23 @@ public class PlayerControls : MonoBehaviour
 	private float xAxis = 0f;
 	private float zAxis = 0f;
 	public Vector3 move;
-	public Vector3 velocity;
 	private float speed = 6f;
 	private float vSpeed = 0f;
 	private float gravity = .005f;
+	private float gravityDT = .316f;
+	private float jumpHeight = .1464f;
 	private Vector3 boom;
 	
 	//other variables
 	public int health = 100;
 	public bool offline = false;
+	public float avgDeltaTime;
 	
 	//debug var
 	public bool scrgr;
 	public bool contgr;
 	private float jumpTime;
-	private float jumpHeight;
+	private float jumpHeightInfo;
 	private bool jumpStart;
 		
 	//in-script defined links
@@ -75,23 +77,28 @@ public class PlayerControls : MonoBehaviour
 		
 		if (jumpStart) {
 			jumpTime += Time.deltaTime;
-			if (jumpHeight < groundCheck.transform.position.y) jumpHeight = groundCheck.transform.position.y;
+			if (jumpHeightInfo < groundCheck.transform.position.y) jumpHeightInfo = groundCheck.transform.position.y;
 			if (this.isGrounded) {
 				jumpStart = false;
-				uiscr.ChatSystemSend($"jumpTime:{jumpTime}, Height: {jumpHeight}, {1/Time.deltaTime} FPS");
+				uiscr.ChatSystemSend($"jumpTime:{jumpTime}, Height: {jumpHeightInfo}, avgDTime{avgDeltaTime}\nJH:{jumpHeight}, Gravity:{gravityDT}");
+				if (jumpHeightInfo > 3f) jumpHeight -= (jumpHeightInfo - 3f)*avgDeltaTime;
+				if (jumpHeightInfo < 3f) jumpHeight += (3f - jumpHeightInfo)*avgDeltaTime;
+				if (jumpTime > 1f) gravityDT += (jumpTime - 1f)*avgDeltaTime;
+				if (jumpTime < 1f) gravityDT -= (1f - jumpTime)*avgDeltaTime;
 				jumpTime = 0;
-				jumpHeight = 0;
+				jumpHeightInfo = 0;
 			}
 		}
 		//*****gravity debug section ENDS*****
+		avgDeltaTime = avgDeltaTime + (Time.deltaTime - avgDeltaTime)/60; // 40->55: -3.25, 55->40: +3.25
 		if (this.isGrounded) {
 			vSpeed = -0.005f;
 		} else {
-			if (controller.velocity.y > -30f) vSpeed -= gravity;
+			if (controller.velocity.y > -30f) vSpeed -= gravityDT * avgDeltaTime;
 		}
 		//Jumping
 		if (vSpeed < 0 && Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
-			vSpeed = gravity*30f;
+			vSpeed = jumpHeight; 
 			jumpStart = true; //delete
 		}
 		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -0.005f;
@@ -126,7 +133,6 @@ public class PlayerControls : MonoBehaviour
 		if (other.name == explName) {
 			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
 			health -= (int)(boom.magnitude * 10f); //health after death may be negative
-			velocity.y = 0f;
 		}
 	}
 	IEnumerator RareChecks() {

@@ -16,22 +16,17 @@ public class PlayerControls : MonoBehaviour
 	public Vector3 move;
 	private float speed = 6f;
 	private float vSpeed = 0f;
-	private float gravity = .005f;
-	private float gravityDT = .316f;
-	private float jumpHeight = .1464f;
-	private Vector3 boom;
+	private float gravity = .01f;
+	private float jumpHeight = .17f;
+	public Vector3 boom;
 	
 	//other variables
 	public int health = 100;
 	public bool offline = false;
-	public float avgDeltaTime;
 	
 	//debug var
 	public bool scrgr;
 	public bool contgr;
-	private float jumpTime;
-	private float jumpHeightInfo;
-	private bool jumpStart;
 		
 	//in-script defined links
 	private PhotonView photonView;
@@ -59,58 +54,13 @@ public class PlayerControls : MonoBehaviour
 		if (!photonView.IsMine && !offline) {
 			return;
 		}
-		//horizontal moving
-		xAxis = Input.GetAxis("Horizontal");
-		zAxis = Input.GetAxis("Vertical");
-		if (uiscr.lockedCursor) move = (transform.right * xAxis + transform.forward * zAxis) * speed * Time.deltaTime;
-		else move = Vector3.zero;
 		
 		//animation
 		if (move != Vector3.zero) animator.SetBool("isWalking", true);
 		else animator.SetBool("isWalking", false);
 		
-		//gravity and ground
-		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
-		//*****gravity debug section*****
-		scrgr = isGrounded;
-		contgr = controller.isGrounded;
-		
-		if (jumpStart) {
-			jumpTime += Time.deltaTime;
-			if (jumpHeightInfo < groundCheck.transform.position.y) jumpHeightInfo = groundCheck.transform.position.y;
-			if (this.isGrounded) {
-				jumpStart = false;
-				uiscr.ChatSystemSend($"jumpTime:{jumpTime}, Height: {jumpHeightInfo}, avgDTime{avgDeltaTime}\nJH:{jumpHeight}, Gravity:{gravityDT}");
-				if (jumpHeightInfo > 3f) jumpHeight -= (jumpHeightInfo - 3f)*avgDeltaTime;
-				if (jumpHeightInfo < 3f) jumpHeight += (3f - jumpHeightInfo)*avgDeltaTime;
-				if (jumpTime > 1f) gravityDT += (jumpTime - 1f)*avgDeltaTime;
-				if (jumpTime < 1f) gravityDT -= (1f - jumpTime)*avgDeltaTime;
-				jumpTime = 0;
-				jumpHeightInfo = 0;
-			}
-		}
-		//*****gravity debug section ENDS*****
-		avgDeltaTime = avgDeltaTime + (Time.deltaTime - avgDeltaTime)/60; // 40->55: -3.25, 55->40: +3.25
-		if (this.isGrounded) {
-			vSpeed = -0.005f;
-		} else {
-			if (controller.velocity.y > -30f) vSpeed -= gravityDT * avgDeltaTime;
-		}
-		//Jumping
-		if (vSpeed < 0 && Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
-			vSpeed = jumpHeight; 
-			jumpStart = true; //delete
-		}
-		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -0.005f;
-		
-		//Bomb blast pushing vector
-		if (boom.magnitude > .007f) {
-			boom = boom / 1.05f;
-		} else boom = Vector3.zero;
-				
-		//Applying move
-		move.y = vSpeed;
-		controller.Move(move + boom);
+		//preventing stick to flooring
+		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
 		
 		//shooting
 		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
@@ -123,6 +73,37 @@ public class PlayerControls : MonoBehaviour
 				}
 				bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+new Vector3(0f, .5f, 0f), ForceMode.Impulse);
 		}
+	}
+	void FixedUpdate() {
+		//horizontal moving
+		xAxis = Input.GetAxis("Horizontal");
+		zAxis = Input.GetAxis("Vertical");
+		if (uiscr.lockedCursor) move = (transform.right * xAxis + transform.forward * zAxis) * speed * Time.deltaTime;
+		else move = Vector3.zero;
+		
+		//gravity and ground
+		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
+		scrgr = isGrounded;
+		contgr = controller.isGrounded;
+		if (this.isGrounded) {
+			vSpeed = -gravity;
+		} else {
+			if (controller.velocity.y > -30f) vSpeed -= gravity;
+		}
+		
+		//Jumping
+		if (vSpeed < 0 && Input.GetButton("Jump") && controller.isGrounded && uiscr.lockedCursor) {
+			vSpeed = jumpHeight;
+		}
+		move.y = vSpeed;
+		
+		//Bomb blast pushing vector
+		if (boom.magnitude > .05f) {
+			boom = boom / 1.05f;
+		} else boom = Vector3.zero;
+		
+		//Applying move
+		controller.Move(move + boom);
 	}
 	void OnControllerColliderHit(ControllerColliderHit hit) {
 		//preventing sticking to walls
@@ -141,8 +122,7 @@ public class PlayerControls : MonoBehaviour
 			if (transform.position.y < -20f) {
 				Debug.Log("Eto fiasko bratan!");
 				uiscr.ChatSystemSend("poznal chto est' fiasko");
-				move = Vector3.zero;
-				transform.position = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
+				PhotonNetwork.Destroy(gameObject);
 			}
 			//death
 			if (health < 1) {

@@ -73,9 +73,7 @@ public class UIScript : MonoBehaviour {
 			//chat preview update & alpha
 			if (chscr.messages.Count == 0) {
 				for (int i = 0; i < 3; i++) {
-					chscr.messages.Add(new List<string>());
-					chscr.messages[i].Add(Time.time.ToString());
-					chscr.messages[i].Add("");
+					chscr.AddMessage("");
 				}
 			}
 			if (chscr.messages[chscr.messages.Count-1][0] != lastMsgTime) {
@@ -118,20 +116,17 @@ public class UIScript : MonoBehaviour {
 		}
 	}
 	public void ChatInputSend() {
+		if (chatInputField.text == "") return;
 		if (!playerScript.offline) chscr.inputLine = chatInputField.text;
 		else {
-			chscr.messages.Add(new List<string>());
-			chscr.messages[chscr.messages.Count-1].Add(Time.time.ToString());
-			chscr.messages[chscr.messages.Count-1].Add("[Me]:"+chatInputField.text);
+			chscr.AddMessage("[Me]:"+chatInputField.text);
 		}
 		chatInputField.text = "";
 	}
 	public void ChatSystemSend(string msg) {
 		if (!playerScript.offline) chscr.inputLine = $"[system]:{msg}";
 		else {
-			chscr.messages.Add(new List<string>());
-			chscr.messages[chscr.messages.Count-1].Add(Time.time.ToString());
-			chscr.messages[chscr.messages.Count-1].Add($"[system]:{msg}");
+			chscr.AddMessage($"[system]:{msg}");
 		}
 		if (chscr.messages.Count > chscr.messagesLimit) chscr.messages.RemoveAt(0);
 	}

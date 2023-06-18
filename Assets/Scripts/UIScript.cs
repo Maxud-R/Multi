@@ -8,6 +8,8 @@ public class UIScript : MonoBehaviour {
 	//owned variables
 	public bool lockedCursor;
 	private Color color;
+	private Color defaultColor;
+	private string lastMsgTime = "0";
 	
 	//in-script defined links
 	private PlayerControls playerScript;
@@ -34,11 +36,12 @@ public class UIScript : MonoBehaviour {
 		camScript = cam.GetComponent<CameraMoving>();
 		StartCoroutine(RareChecks());
 		color = chatLines[0].color;
+		defaultColor = chatLines[0].color;
 		color.a = 0;
     }
     void Update () {
 		//cursor lock & in-game menu show
-		if (Input.GetButtonDown("Cancel") && Application.isFocused) lockedCursor = !lockedCursor;
+		if ((Input.GetButtonDown("Cancel") || Input.GetButtonDown("Submit")) && Application.isFocused) lockedCursor = !lockedCursor;
 		if (lockedCursor){
 			if (!Application.isFocused) lockedCursor = false;
 			if (Cursor.lockState == CursorLockMode.None) {
@@ -60,16 +63,33 @@ public class UIScript : MonoBehaviour {
     IEnumerator RareChecks() {
 		bool playerDead = false;
 		for (;;) {
-			//chatUpdate
+			
+			//chatMenuUpdate
 			chatText.text = "";
 		    foreach(List<string> x in chscr.messages) {
      			chatText.text += "\n"+x[1];
 			}
-			for (int i = 0; i < 2; i++) {
+			
+			//chat preview update & alpha
+			if (chscr.messages.Count == 0) {
+				for (int i = 0; i < 3; i++) {
+					chscr.messages.Add(new List<string>());
+					chscr.messages[i].Add(Time.time.ToString());
+					chscr.messages[i].Add("");
+				}
+			}
+			if (chscr.messages[chscr.messages.Count-1][0] != lastMsgTime) {
+				chatLines[2].color = chatLines[1].color;
+				chatLines[1].color = chatLines[0].color;
+				chatLines[0].color = defaultColor;
+				lastMsgTime = chscr.messages[chscr.messages.Count-1][0];
+			}
+			for (int i = 0; i < 3; i++) {
 				chatLines[i].text = chscr.messages[chscr.messages.Count-i-1][1];
 				chatLines[i].color = Color.Lerp(chatLines[i].color, color, (Time.time - float.Parse(chscr.messages[chscr.messages.Count-i-1][0])) * Time.deltaTime);
 			}
-			//HealthUpdate*/
+			
+			//HealthUpdate
 			if (player != null) {
 				if (playerDead) {
 					playerScript = player.GetComponent<PlayerControls>();
@@ -80,6 +100,7 @@ public class UIScript : MonoBehaviour {
 			} else {
 				playerDead = true;
 			}
+			
 			//Description text
 			if (Physics.Raycast(cam.transform.position, cam.transform.forward, out look, 10f)) {
 				lookObject = look.collider.gameObject;
@@ -100,7 +121,8 @@ public class UIScript : MonoBehaviour {
 		if (!playerScript.offline) chscr.inputLine = chatInputField.text;
 		else {
 			chscr.messages.Add(new List<string>());
-			chscr.messages[chscr.messages.Count-1].Add(chatInputField.text);
+			chscr.messages[chscr.messages.Count-1].Add(Time.time.ToString());
+			chscr.messages[chscr.messages.Count-1].Add("[Me]:"+chatInputField.text);
 		}
 		chatInputField.text = "";
 	}
@@ -108,6 +130,7 @@ public class UIScript : MonoBehaviour {
 		if (!playerScript.offline) chscr.inputLine = $"[system]:{msg}";
 		else {
 			chscr.messages.Add(new List<string>());
+			chscr.messages[chscr.messages.Count-1].Add(Time.time.ToString());
 			chscr.messages[chscr.messages.Count-1].Add($"[system]:{msg}");
 		}
 		if (chscr.messages.Count > chscr.messagesLimit) chscr.messages.RemoveAt(0);

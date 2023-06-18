@@ -8,7 +8,6 @@ public class UIScript : MonoBehaviour {
 	//owned variables
 	public bool lockedCursor;
 	private Color color;
-	private Color defaultColor;
 	private string lastMsgTime = "0";
 	
 	//in-script defined links
@@ -36,7 +35,6 @@ public class UIScript : MonoBehaviour {
 		camScript = cam.GetComponent<CameraMoving>();
 		StartCoroutine(RareChecks());
 		color = chatLines[0].color;
-		defaultColor = chatLines[0].color;
 		color.a = 0;
     }
     void Update () {
@@ -79,7 +77,7 @@ public class UIScript : MonoBehaviour {
 			if (chscr.messages[chscr.messages.Count-1][0] != lastMsgTime) {
 				chatLines[2].color = chatLines[1].color;
 				chatLines[1].color = chatLines[0].color;
-				chatLines[0].color = defaultColor;
+				chatLines[0].color = Color.white;
 				lastMsgTime = chscr.messages[chscr.messages.Count-1][0];
 			}
 			for (int i = 0; i < 3; i++) {

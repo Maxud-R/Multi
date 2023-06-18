@@ -1699,7 +1699,7 @@ MonoBehaviour:
   CamRotationX: 0
   CamRotationY: 0
   lockedCursor: 0
-  mouseSens: 200
+  mouseSens: 3
   target: {fileID: 0}
   uiscr: {fileID: 1238209336}
 --- !u!1001 &372123598
@@ -5847,10 +5847,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 808517110}
   m_HandleRect: {fileID: 1068334450}
   m_Direction: 0
-  m_MinValue: 50
-  m_MaxValue: 500
+  m_MinValue: 1
+  m_MaxValue: 5
   m_WholeNumbers: 0
-  m_Value: 88
+  m_Value: 3.2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -5877,7 +5877,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba178a8e9fc8e8447bc19c632a21ef27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 346314970}
   slider: {fileID: 1420345682}
 --- !u!1001 &1453316555
 PrefabInstance:
@@ -9219,8 +9218,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -0.019042969, y: 79.671}
-  m_SizeDelta: {x: 0.038085938, y: 78.6581}
+  m_AnchoredPosition: {x: -0.019042969, y: 72.7}
+  m_SizeDelta: {x: 0.038085938, y: 64.64641}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2087038364
 MonoBehaviour:

@@ -11,7 +11,7 @@ public class CameraMoving : MonoBehaviour {
 	public float CamRotationY = 0f;
 	public bool lockedCursor;
 	private Vector3 offset = new Vector3(0f, 1.1f, 0f);
-	public float mouseSens = 200f;
+	public float mouseSens = 3f;
 	private Vector3 viewPoint = new Vector3(0f, 5f, 0f);
 	
 	//in-script defined links
@@ -23,16 +23,11 @@ public class CameraMoving : MonoBehaviour {
 	void Start() {
 		//
 	}
-	void Update() {/**
-		//cursor lock 
-		if (Input.GetButtonDown("Cancel") && Application.isFocused) lockedCursor = !lockedCursor;
-		if (lockedCursor && !Application.isFocused) lockedCursor = false;
-		//menu
-		if (lockedCursor == panel.activeSelf) panel.SetActive(!lockedCursor);**/
+	void Update() {
 		//Camera rotation
 		if (uiscr.lockedCursor) {
-			mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
-			mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;
+			mouseX = Input.GetAxis("Mouse X") * mouseSens;
+			mouseY = Input.GetAxis("Mouse Y") * mouseSens;
 			CamRotationX -= mouseY;
 			CamRotationY += mouseX;
 			CamRotationX = Mathf.Clamp(CamRotationX, -90f, 90f);

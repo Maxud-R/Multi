@@ -19,4 +19,7 @@ public class BombBehavior : MonoBehaviour {
 		Destroy(blast.transform.GetChild(0).gameObject, .1f); //shockwawe
 		Destroy(blast, 1f); //destroy whole object (particles) after 1 second
 	}
+	void OnCollisionEnter(Collision data) {
+		if (gameObject.name == "Bomb2(Clone)") gameObject.GetComponent<Rigidbody>().isKinematic = true;
+	}
 }

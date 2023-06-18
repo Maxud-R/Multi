@@ -7,6 +7,7 @@ using Photon.Pun;
 public class UIScript : MonoBehaviour {
 	//owned variables
 	public bool lockedCursor;
+	private Color color;
 	
 	//in-script defined links
 	private PlayerControls playerScript;
@@ -21,6 +22,7 @@ public class UIScript : MonoBehaviour {
 	public Text hptext;
 	public Text desc;
 	public Text chatText;
+	public Text[] chatLines = new Text[3];
 	public Image hbar;
 	public ChatScript chscr;
 	public InputField chatInputField;
@@ -31,6 +33,8 @@ public class UIScript : MonoBehaviour {
 		cam = GameObject.FindWithTag("MainCamera");
 		camScript = cam.GetComponent<CameraMoving>();
 		StartCoroutine(RareChecks());
+		color = chatLines[0].color;
+		color.a = 0;
     }
     void Update () {
 		//cursor lock & in-game menu show
@@ -58,10 +62,14 @@ public class UIScript : MonoBehaviour {
 		for (;;) {
 			//chatUpdate
 			chatText.text = "";
-		    foreach(string x in chscr.messages) {
-     			chatText.text += "\n"+x;
+		    foreach(List<string> x in chscr.messages) {
+     			chatText.text += "\n"+x[1];
 			}
-			//HealthUpdate
+			for (int i = 0; i < 2; i++) {
+				chatLines[i].text = chscr.messages[chscr.messages.Count-i-1][1];
+				chatLines[i].color = Color.Lerp(chatLines[i].color, color, (Time.time - float.Parse(chscr.messages[chscr.messages.Count-i-1][0])) * Time.deltaTime);
+			}
+			//HealthUpdate*/
 			if (player != null) {
 				if (playerDead) {
 					playerScript = player.GetComponent<PlayerControls>();
@@ -89,12 +97,19 @@ public class UIScript : MonoBehaviour {
 		}
 	}
 	public void ChatInputSend() {
-		chscr.inputLine = chatInputField.text;
+		if (!playerScript.offline) chscr.inputLine = chatInputField.text;
+		else {
+			chscr.messages.Add(new List<string>());
+			chscr.messages[chscr.messages.Count-1].Add(chatInputField.text);
+		}
 		chatInputField.text = "";
 	}
 	public void ChatSystemSend(string msg) {
 		if (!playerScript.offline) chscr.inputLine = $"[system]:{msg}";
-		else chscr.messages.Add($"[system]:{msg}");
+		else {
+			chscr.messages.Add(new List<string>());
+			chscr.messages[chscr.messages.Count-1].Add($"[system]:{msg}");
+		}
 		if (chscr.messages.Count > chscr.messagesLimit) chscr.messages.RemoveAt(0);
 	}
 }

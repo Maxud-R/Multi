@@ -18,15 +18,13 @@ public class PlayerControls : MonoBehaviour
 	private float vSpeed = 0f;
 	private float gravity = .01f;
 	private float jumpHeight = .17f;
-	public Vector3 boom;
+	private Vector3 boom;
 	
 	//other variables
 	public int health = 100;
 	public bool offline = false;
 	
 	//debug var
-	public bool scrgr;
-	public bool contgr;
 		
 	//in-script defined links
 	private PhotonView photonView;
@@ -83,8 +81,6 @@ public class PlayerControls : MonoBehaviour
 		
 		//gravity and ground
 		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);
-		scrgr = isGrounded;
-		contgr = controller.isGrounded;
 		if (this.isGrounded) {
 			vSpeed = -gravity;
 		} else {

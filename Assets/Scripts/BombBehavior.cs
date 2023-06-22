@@ -10,7 +10,7 @@ public class BombBehavior : MonoBehaviour {
 		StartCoroutine(Delay());
 	}
     IEnumerator Delay() {
-		yield return new WaitForSeconds(2f); //not needed to stop, it is automatically when destroy;
+		yield return new WaitForSeconds(5f); //not needed to stop, it is automatically when destroy;
 		PhotonNetwork.Destroy(gameObject); //this bomb will be destroyed in 2 seconds
     }
     void OnDestroy() {
@@ -20,6 +20,7 @@ public class BombBehavior : MonoBehaviour {
 		Destroy(blast, 1f); //destroy whole object (particles) after 1 second
 	}
 	void OnCollisionEnter(Collision data) {
-		if (gameObject.name == "Bomb2(Clone)") gameObject.GetComponent<Rigidbody>().isKinematic = true;
+		if (data.gameObject.name == "PlayerInterface(Clone)") PhotonNetwork.Destroy(gameObject);
+		if (gameObject.name == "Bomb2(Clone)" && data.gameObject.name != "Bomb2(Clone)") gameObject.GetComponent<Rigidbody>().isKinematic = true;
 	}
 }

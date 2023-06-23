@@ -6,9 +6,10 @@ using Photon.Pun;
 
 public class UIScript : MonoBehaviour {
 	//owned variables
-	public bool lockedCursor;
+	public bool lockedCursor; //true - menu&chat is open
 	private Color color;
 	private string lastMsgTime = "0";
+	public int chosenBomb;
 	
 	//in-script defined links
 	private PlayerControls playerScript;
@@ -27,6 +28,7 @@ public class UIScript : MonoBehaviour {
 	public Image hbar;
 	public ChatScript chscr;
 	public InputField chatInputField;
+	public RectTransform SelectionGroup;
 	
     void Start() {
 		lockedCursor = true;
@@ -53,9 +55,19 @@ public class UIScript : MonoBehaviour {
 		if (lockedCursor == panel.activeSelf) {
 			panel.SetActive(!lockedCursor);
 		}
+		
+		//Auto-input when chat open
 		if (panel.activeSelf && Input.GetButtonDown("Submit") && !chatInputField.isFocused) {
 			chatInputField.Select();
 			chatInputField.ActivateInputField();
+		}
+		
+		//chosing bomb
+		if (Input.mouseScrollDelta.y != 0f && lockedCursor) {
+			chosenBomb += (int) Input.mouseScrollDelta.y;
+			chosenBomb = Mathf.Clamp(chosenBomb, 0, PlayerControls.BOMB_COUNT-1);
+			Debug.Log(chosenBomb);
+			SelectionGroup.anchoredPosition = new Vector2(chosenBomb*-100f, 0f);
 		}
 	}
     IEnumerator RareChecks() {

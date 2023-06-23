@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControls : MonoBehaviour
-{
+public class PlayerControls : MonoBehaviour {
 	//gravity variables
 	public Transform groundCheck;
 	public LayerMask groundMask;
@@ -23,7 +22,7 @@ public class PlayerControls : MonoBehaviour
 	//other variables
 	public int health = 100;
 	public bool offline = false;
-	private int chosenBomb;
+	public const int BOMB_COUNT = 3;
 	
 	//debug var
 		
@@ -35,7 +34,7 @@ public class PlayerControls : MonoBehaviour
 	private string explName;
 	
 	//in-editor defined links
-	public GameObject[] bombPref = new GameObject[2];
+	public GameObject[] bombPref = new GameObject[BOMB_COUNT];
 	public GameObject expl;
 	public UIScript uiscr;
 	
@@ -61,20 +60,14 @@ public class PlayerControls : MonoBehaviour
 		//preventing stick to flooring
 		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
 		
-		//chosing bomb
-		if (Input.mouseScrollDelta.y != 0f) {
-			chosenBomb += (int) Input.mouseScrollDelta.y;
-			chosenBomb = Mathf.Clamp(chosenBomb, 0, 2);
-			Debug.Log(chosenBomb);
-		}
 		//shooting
 		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
 				Vector3 pos = transform.TransformPoint(new Vector3(.85f, .2f, 1f));
 				GameObject bomb;
 				if (!offline) {
-					bomb = PhotonNetwork.Instantiate(bombPref[chosenBomb].name, pos, transform.rotation);
+					bomb = PhotonNetwork.Instantiate(bombPref[uiscr.chosenBomb].name, pos, transform.rotation);
 				} else {
-					bomb = Instantiate(bombPref[chosenBomb], pos, transform.rotation);
+					bomb = Instantiate(bombPref[uiscr.chosenBomb], pos, transform.rotation);
 				}
 				bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+new Vector3(0f, .5f, 0f), ForceMode.Impulse);
 		}

@@ -7,8 +7,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class ManagerGame : MonoBehaviourPunCallbacks
-{
+public class ManagerGame : MonoBehaviourPunCallbacks {
 	//in-editor defined links
     public GameObject PlayerPrefab;
     public GameObject uiCanvas;

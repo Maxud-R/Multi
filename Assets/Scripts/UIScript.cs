@@ -10,6 +10,7 @@ public class UIScript : MonoBehaviour {
 	private Color color;
 	private string lastMsgTime = "0";
 	public int chosenBomb;
+	private Vector2 bombSelectionMove;
 	
 	//in-script defined links
 	private PlayerControls playerScript;
@@ -66,8 +67,11 @@ public class UIScript : MonoBehaviour {
 		if (Input.mouseScrollDelta.y != 0f && lockedCursor) {
 			chosenBomb += (int) Input.mouseScrollDelta.y;
 			chosenBomb = Mathf.Clamp(chosenBomb, 0, PlayerControls.BOMB_COUNT-1);
-			Debug.Log(chosenBomb);
-			SelectionGroup.anchoredPosition = new Vector2(chosenBomb*-100f, 0f);
+			Debug.Log($"Bomb:{chosenBomb}");
+			
+		}
+		if (Mathf.Abs(SelectionGroup.anchoredPosition.x - chosenBomb*-100f) > 0.1f) {
+			SelectionGroup.anchoredPosition = SelectionGroup.anchoredPosition + (new Vector2(chosenBomb*-100f, 0f) - SelectionGroup.anchoredPosition) * Time.deltaTime * 3f;
 		}
 	}
     IEnumerator RareChecks() {

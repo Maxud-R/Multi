@@ -67,7 +67,6 @@ public class UIScript : MonoBehaviour {
 		if (Input.mouseScrollDelta.y != 0f && lockedCursor) {
 			chosenBomb += (int) Input.mouseScrollDelta.y;
 			chosenBomb = Mathf.Clamp(chosenBomb, 0, PlayerControls.BOMB_COUNT-1);
-			Debug.Log($"Bomb:{chosenBomb}");
 			
 		}
 		if (Mathf.Abs(SelectionGroup.anchoredPosition.x - chosenBomb*-100f) > 0.1f) {

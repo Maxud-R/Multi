@@ -29,12 +29,10 @@ public class BombBehavior : MonoBehaviour {
     void OnDestroy() {
 		if (noExpl) {
 			int attempts = 10;
-			for (int i = 0; i < 1; i++) {
-				//Vector3 pos = new Vector3(Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS));
-				Vector3 pos = Vector3.forward;
+			for (int i = 0; i < 5; i++) {
+				Vector3 pos = new Vector3(Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS));
 				if (!Physics.Raycast(transform.position, pos, 0.36f)) {
 					GameObject thatFragment = Instantiate(fragment, transform.position + pos.normalized/3f, Quaternion.LookRotation(pos));
-					//thatFragment.GetComponentInChildren<HingeJoint>().connectedBody = GetComponent<Rigidbody>();
 				} else {
 					i--;
 					attempts--;

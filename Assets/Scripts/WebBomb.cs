@@ -6,7 +6,13 @@ using Photon.Pun;
 public class WebBomb : MonoBehaviour {
 
 	public GameObject fragment;
+	public Material errorMaterial;
+	private GameObject thatFragment;
+	private GameObject prevFragment;
 	private const float RADIUS = 0.3f;
+	private const float DISTANCE = 0.5f;
+	private const int LENGTH = 7;
+	private const int RAY_COUNT = 5;
 	
 	void Start() {
 		StartCoroutine(Delay());
@@ -17,17 +23,26 @@ public class WebBomb : MonoBehaviour {
 		PhotonNetwork.Destroy(gameObject); //this bomb will be destroyed in 2 seconds
     }
     
-    void OnDestroy() {
-		int attempts = 10;
-		for (int i = 0; i < 5; i++) {
+	void OnDestroy() {
+		int attempts = 5;
+		for (int i = 0; i < RAY_COUNT; i++) {
 			Vector3 pos = new Vector3(Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS));
-			if (!Physics.Raycast(transform.position, pos, 0.36f)) {
-				GameObject thatFragment = Instantiate(fragment, transform.position + pos.normalized/3f, Quaternion.LookRotation(pos));
+			if (Physics.Raycast(transform.position, pos, (float)LENGTH*0.36f)) {
+				Vector3 point = transform.position;
+				for (int b = 0; b < LENGTH; b++) {
+					bool createNext = false;
+					if (Physics.Raycast(point, pos, DISTANCE)) createNext = true;
+					thatFragment = Instantiate(fragment, point + pos.normalized/1.7f, Quaternion.LookRotation(pos));
+					if (createNext) thatFragment.transform.GetChild(0).gameObject.GetComponent<Renderer>().material = errorMaterial;
+					if (b > 0) prevFragment.GetComponentInChildren<HingeJoint>().connectedBody = thatFragment.GetComponentInChildren<Rigidbody>();
+					point = thatFragment.transform.position;
+					prevFragment = thatFragment;
+				}
 			} else {
-				i--;
 				attempts--;
+				i--;
 			}
-			if (attempts == 0) break;
+			if (attempts <= 0) break;
 		}
 	}
 	

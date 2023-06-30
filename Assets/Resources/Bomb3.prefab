@@ -164,3 +164,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fragment: {fileID: 4311775966506749035, guid: 08f564b72a30fab40b1caf9fca4c045e,
     type: 3}
+  errorMaterial: {fileID: 2100000, guid: 02a2442922de9304a9280713a56159c3, type: 2}

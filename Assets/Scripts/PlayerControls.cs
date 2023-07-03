@@ -111,7 +111,7 @@ public class PlayerControls : MonoBehaviour {
 			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
 			health -= (int)(boom.magnitude * 10f); //health after death may be negative
 		}
-		if (other.name == "Web" && speed == 6f) StartCoroutine(SlowMowing());
+		//if (other.name == "Web" && speed == 6f) StartCoroutine(SlowMowing());
 	}
 	IEnumerator RareChecks() {
 		for (;;) {

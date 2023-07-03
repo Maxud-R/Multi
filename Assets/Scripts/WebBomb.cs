@@ -11,12 +11,13 @@ public class WebBomb : MonoBehaviour {
 	private const int RAY_COUNT = 5;
 	public GameObject fragment;
 	public Material errorMaterial;
+	public LayerMask layerMask;
 	private GameObject prevFragment;
 	private GameObject[,] list = new GameObject[RAY_COUNT, LENGTH];
 	private Vector3 throwDir;
 	
 	void Start() {
-		throwDir = transform.position;
+		//throwDir = transform.position;
 	}
 	
 	void Update () {
@@ -35,18 +36,21 @@ public class WebBomb : MonoBehaviour {
 		}
 	}
     
-	void Generate() { //TOFIX: rays are generated only when enough room for full length. First fragment too far from bomb.
-		int attempts = 5;
+	void Generate() {
+		int attempts = 10;
 		for (int i = 0; i < RAY_COUNT; i++) {
 			Vector3 pos = new Vector3(Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS), Random.Range(-RADIUS, RADIUS));
-			pos += throwDir.normalized/2f;
-			if (!Physics.Raycast(transform.position, pos, (float)LENGTH*0.36f)) {
+			pos += throwDir/3f;
+			if (!Physics.Raycast(transform.position, pos, 0.36f, layerMask) && Physics.Raycast(transform.position, pos, (float)LENGTH*0.6f, layerMask)) { //proceed only we can generate first fragment and obstacle not too far for sticking to
 				Vector3 point = transform.position;
+				Debug.DrawRay(transform.position, point, Color.blue, 4f);
 				for (int b = 0; b < LENGTH; b++) {
-					if (!Physics.Raycast(point, pos, DISTANCE)) {
-						list[i, b] = Instantiate(fragment, point + pos.normalized/1.7f, Quaternion.LookRotation(pos));
+					if (!Physics.Raycast(point, pos, DISTANCE, layerMask)) { //if next fragment will not overlap obstacle
+						Vector3 pointSum = point + pos.normalized/1.7f;
+						if (b == 0) pointSum = (pointSum - transform.position)*0.42f + transform.position; //first fragmen distance fix
+						list[i, b] = Instantiate(fragment, pointSum, Quaternion.LookRotation(pos));
 						if (b > 0) prevFragment.GetComponentInChildren<HingeJoint>().connectedBody = list[i, b].GetComponentInChildren<Rigidbody>();
-						else list[i, b].GetComponentInChildren<Rigidbody>().isKinematic = true;
+						else list[i, b].GetComponentInChildren<Rigidbody>().isKinematic = true; //first fragment connection to the world
 						point = list[i, b].transform.position;
 						prevFragment = list[i, b];
 					} else {
@@ -65,8 +69,8 @@ public class WebBomb : MonoBehaviour {
 		if (data.gameObject.name == "PlayerInterface(Clone)") PhotonNetwork.Destroy(gameObject);
 		else {
 			gameObject.GetComponent<Rigidbody>().isKinematic = true;
-			throwDir = Vector3.zero;
-			//throwDir -= transform.position;
+			throwDir = data.GetContact(0).normal;
+			//Debug.DrawRay(transform.position, throwDir/3f, Color.blue, 10f);
 			Generate();
 		}
 	}

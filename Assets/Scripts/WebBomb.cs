@@ -30,6 +30,7 @@ public class WebBomb : MonoBehaviour {
 		for (;;) {
 			for (int i = 0; i < sizearr.Count; i++) {
 				flashList[i].SetPosition(0, transform.position);
+				if (sizearr[i] == 0) Debug.Log("A");
 				flashList[i].SetPosition(flashList[i].positionCount-1, list[i, sizearr[i]-1].transform.position + new Vector3(Random.Range(-.1f, .1f), Random.Range(-.1f, .1f), Random.Range(-.1f, .1f)));
 				for (int b = 2; b < flashList[i].positionCount; b += 2) {
 					Vector3 noise = new Vector3(Random.Range(-.1f, .1f), Random.Range(-.1f, .1f), Random.Range(-.1f, .1f));
@@ -47,7 +48,6 @@ public class WebBomb : MonoBehaviour {
 		for (int i = 0; i < sizearr.Count; i++) {
 			for (int b = 0; b < sizearr[i]; b++) {
 				Destroy(list[i, b]);
-				Destroy(flashList[i].gameObject);
 			}
 		}
 	}
@@ -59,9 +59,9 @@ public class WebBomb : MonoBehaviour {
 			pos += throwDir/3f;
 			if (!Physics.Raycast(transform.position, pos, 0.36f, layerMask) && Physics.Raycast(transform.position, pos, (float)LENGTH*0.6f, layerMask)) { //proceed only we can generate first fragment and obstacle not too far for sticking to
 				Vector3 point = transform.position;
-				sizearr.Add(0);
 				for (int b = 0; b < LENGTH; b++) {
 					if (!Physics.Raycast(point, pos, DISTANCE, layerMask)) { //if next fragment will not overlap obstacle
+						if (sizearr.Count-1 < i) sizearr.Add(0);
 						Vector3 pointSum = point + pos.normalized/1.8f;
 						if (b == 0) pointSum = (pointSum - transform.position)*0.42f + transform.position; //first fragmen distance fix
 						list[i, b] = Instantiate(fragment, pointSum, Quaternion.LookRotation(pos));
@@ -87,7 +87,7 @@ public class WebBomb : MonoBehaviour {
 	
 	void OnCollisionEnter(Collision data) {
 		GameObject origLine = transform.GetChild(0).gameObject;
-		if (data.gameObject.name == "PlayerInterface(Clone)") Debug.Log("A");//PhotonNetwork.Destroy(gameObject);
+		if (data.gameObject.name == "PlayerInterface(Clone)" || data.gameObject.name == "shock") PhotonNetwork.Destroy(gameObject);
 		else {
 			gameObject.GetComponent<Rigidbody>().isKinematic = true;
 			throwDir = data.GetContact(0).normal;
@@ -99,8 +99,11 @@ public class WebBomb : MonoBehaviour {
 			for (int i = 1; i < sizearr.Count; i++) {
 				flashList[i] = Instantiate(origLine, transform.position, Quaternion.identity).GetComponent<LineRenderer>();;
 				flashList[i].positionCount = sizearr[i]*2;
+				flashList[i].transform.parent = transform;
 			}
 			StartCoroutine(FlashUpdate());
+			
+			Debug.Log(sizearr.Count);
 		}
 	}
 }

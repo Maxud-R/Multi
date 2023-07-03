@@ -107,11 +107,15 @@ public class PlayerControls : MonoBehaviour {
 	}
 	void OnTriggerEnter(Collider other) {
 		//calculating pushing vector and applying health damage
-		if (other.name == explName) {
+		if (other.name == explName || other.name == "Web") {
 			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position)) * 2;
 			health -= (int)(boom.magnitude * 10f); //health after death may be negative
 		}
-		//if (other.name == "Web" && speed == 6f) StartCoroutine(SlowMowing());
+		if (other.name == "Web") {
+			if (speed == 6f) StartCoroutine(SlowMowing());
+			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position));
+			health -= (int)(boom.magnitude * 20f);
+		}
 	}
 	IEnumerator RareChecks() {
 		for (;;) {

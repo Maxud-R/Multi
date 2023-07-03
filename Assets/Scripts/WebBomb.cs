@@ -13,21 +13,41 @@ public class WebBomb : MonoBehaviour {
 	public LayerMask layerMask;
 	private GameObject prevFragment;
 	private GameObject[,] list = new GameObject[RAY_COUNT, LENGTH];
+	private LineRenderer[] flashList = new LineRenderer[RAY_COUNT];
 	private Vector3 throwDir;
-	private int[] sizearr = new int[RAY_COUNT];
+	private List<int> sizearr = new List<int>();
+	private Light flashLight;
 	
 	void Start() {
-		//
+		flashLight = GetComponentInChildren<Light>();
 	}
 	
 	void Update () {
 		if (Input.GetMouseButtonDown(1)) Destroy(gameObject);
 	}
 	
+	IEnumerator FlashUpdate() {
+		for (;;) {
+			for (int i = 0; i < sizearr.Count; i++) {
+				flashList[i].SetPosition(0, transform.position);
+				flashList[i].SetPosition(flashList[i].positionCount-1, list[i, sizearr[i]-1].transform.position + new Vector3(Random.Range(-.1f, .1f), Random.Range(-.1f, .1f), Random.Range(-.1f, .1f)));
+				for (int b = 2; b < flashList[i].positionCount; b += 2) {
+					Vector3 noise = new Vector3(Random.Range(-.1f, .1f), Random.Range(-.1f, .1f), Random.Range(-.1f, .1f));
+					flashList[i].SetPosition(b-1, list[i, b/2].transform.position + noise);
+					noise = new Vector3(Random.Range(-.1f, .1f), Random.Range(-.1f, .1f), Random.Range(-.1f, .1f));
+					flashList[i].SetPosition(b, list[i, b/2].transform.position + noise);
+				}
+			}
+			flashLight.intensity = Random.Range(.3f, 1f);
+			yield return new WaitForSeconds(Random.Range(.05f, .2f));
+		}
+	}
     void OnDestroy() {
-		for (int i = 0; i < RAY_COUNT; i++) {
-			for (int b = 0; b < LENGTH; b++) {
+		if (sizearr.Count == 0) return;
+		for (int i = 0; i < sizearr.Count; i++) {
+			for (int b = 0; b < sizearr[i]; b++) {
 				Destroy(list[i, b]);
+				Destroy(flashList[i].gameObject);
 			}
 		}
 	}
@@ -39,6 +59,7 @@ public class WebBomb : MonoBehaviour {
 			pos += throwDir/3f;
 			if (!Physics.Raycast(transform.position, pos, 0.36f, layerMask) && Physics.Raycast(transform.position, pos, (float)LENGTH*0.6f, layerMask)) { //proceed only we can generate first fragment and obstacle not too far for sticking to
 				Vector3 point = transform.position;
+				sizearr.Add(0);
 				for (int b = 0; b < LENGTH; b++) {
 					if (!Physics.Raycast(point, pos, DISTANCE, layerMask)) { //if next fragment will not overlap obstacle
 						Vector3 pointSum = point + pos.normalized/1.8f;
@@ -55,6 +76,7 @@ public class WebBomb : MonoBehaviour {
 				}
 				if (sizearr[i] > 1) list[i, 1].GetComponentInChildren<ElectricImpulse>().doImpulse = true;
 				if (sizearr[i] > 3) list[i, sizearr[i]-2].GetComponentInChildren<ElectricImpulse>().doImpulse = true;
+				
 			} else {
 				attempts--;
 				i--;
@@ -64,14 +86,21 @@ public class WebBomb : MonoBehaviour {
 	}
 	
 	void OnCollisionEnter(Collision data) {
+		GameObject origLine = transform.GetChild(0).gameObject;
 		if (data.gameObject.name == "PlayerInterface(Clone)") Debug.Log("A");//PhotonNetwork.Destroy(gameObject);
 		else {
 			gameObject.GetComponent<Rigidbody>().isKinematic = true;
 			throwDir = data.GetContact(0).normal;
 			Generate();
-			for (int i = 0; i < sizearr.Length; i++) {
-				return;
+			flashLight.transform.position = transform.position + throwDir;
+			if (sizearr.Count == 0) return;
+			flashList[0] = origLine.GetComponent<LineRenderer>();
+			flashList[0].positionCount = sizearr[0]*2;
+			for (int i = 1; i < sizearr.Count; i++) {
+				flashList[i] = Instantiate(origLine, transform.position, Quaternion.identity).GetComponent<LineRenderer>();;
+				flashList[i].positionCount = sizearr[i]*2;
 			}
+			StartCoroutine(FlashUpdate());
 		}
 	}
 }

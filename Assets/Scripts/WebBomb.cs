@@ -7,7 +7,7 @@ public class WebBomb : MonoBehaviour {
 
 	private const float RADIUS = 0.3f;
 	private const float DISTANCE = 0.6f;
-	private const int LENGTH = 7;
+	private const int LENGTH = 12;
 	private const int RAY_COUNT = 5;
 	public GameObject fragment;
 	public LayerMask layerMask;
@@ -102,8 +102,6 @@ public class WebBomb : MonoBehaviour {
 				flashList[i].transform.parent = transform;
 			}
 			StartCoroutine(FlashUpdate());
-			
-			Debug.Log(sizearr.Count);
 		}
 	}
 }

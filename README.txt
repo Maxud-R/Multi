@@ -1,0 +1,2 @@
+[BUG] Stucking player between walls, which placed on distance of 3 units causes stack overflow.
+[BUG] WebBomb throwed into another WebBomb generate rays, which can't be deleted properly. Also that throws index of bounds of array exception.

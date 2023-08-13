@@ -103,7 +103,10 @@ public class PlayerControls : MonoBehaviour {
 	}
 	void OnControllerColliderHit(ControllerColliderHit hit) {
 		//preventing sticking to walls
-		if (controller.isGrounded && !this.isGrounded) controller.Move((groundCheck.position - hit.point)*Time.deltaTime);
+		if (controller.isGrounded && !this.isGrounded && (controller.collisionFlags & CollisionFlags.Sides) != 0) {
+			controller.Move((-hit.moveDirection) * Time.deltaTime);
+		}
+
 	}
 	void OnTriggerEnter(Collider other) {
 		//calculating pushing vector and applying health damage

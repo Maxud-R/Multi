@@ -22,10 +22,9 @@ public class ManagerGame : MonoBehaviourPunCallbacks {
 		}
 	}
 	public void SpawnMe() {
-		Vector3 pos = new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
-		if (PhotonNetwork.InRoom) MyPlayer = PhotonNetwork.Instantiate(PlayerPrefab.name, pos, Quaternion.identity);
+		if (PhotonNetwork.InRoom) MyPlayer = PhotonNetwork.Instantiate(PlayerPrefab.name, transform.position, Quaternion.identity);
 		if (MyPlayer == null) {
-			MyPlayer = Instantiate(PlayerPrefab, pos, Quaternion.identity);
+			MyPlayer = Instantiate(PlayerPrefab, transform.position, Quaternion.identity);
 			MyPlayer.GetComponent<PlayerControls>().offline = true;
 		}
 		GameObject camera = GameObject.FindWithTag("MainCamera");

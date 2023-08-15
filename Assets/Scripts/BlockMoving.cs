@@ -8,12 +8,12 @@ public class BlockMoving : MonoBehaviour {
     private Vector3 destination;
     private Vector3 startPosition;
     private Vector3 direction;
-    private readonly float stepDistance = 0.1f;
+    private readonly float stepDistance = 0.02f;
 
     private void Start() {
         startPosition = transform.position;
         destination = transform.position;
-        destination.x += distance;
+        destination = transform.TransformPoint(transform.forward * distance);
         direction = (destination - startPosition).normalized;
     }
     void FixedUpdate() {

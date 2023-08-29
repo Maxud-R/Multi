@@ -53,10 +53,6 @@ public class PlayerControls : MonoBehaviour {
 			return;
 		}
 		
-		//animation
-		if (move != Vector3.zero) animator.SetBool("isWalking", true);
-		else animator.SetBool("isWalking", false);
-		
 		//preventing stick to flooring
 		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
 		
@@ -78,6 +74,13 @@ public class PlayerControls : MonoBehaviour {
 		zAxis = Input.GetAxis("Vertical");
 		if (uiscr.lockedCursor) move = (transform.right * xAxis + transform.forward * zAxis) * speed * Time.deltaTime;
 		else move = Vector3.zero;
+
+		//animation
+		if (move.x != 0 || move.y != 0) {
+			animator.SetBool("isWalking", true);
+		} else {
+			animator.SetBool("isWalking", false);
+		}
 		
 		//gravity and ground
 		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheck.localScale.x/2, groundMask);

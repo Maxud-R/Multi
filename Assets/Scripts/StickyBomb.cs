@@ -7,7 +7,7 @@ public class StickyBomb : MonoBehaviour {
 	
 	public GameObject expl;
 	private float scale;
-	private readonly float detonationTime = 2f;
+	private readonly float detonationTime = 20f;
 	private readonly float particlesLifetime = 1f;
 	private readonly float shockwaveDuration = .1f;
 	
@@ -27,12 +27,13 @@ public class StickyBomb : MonoBehaviour {
     }
 	void OnCollisionEnter(Collision data) {
         gameObject.transform.SetParent(data.gameObject.transform);
+		gameObject.GetComponent<Rigidbody>().isKinematic = true;
 		if (data.gameObject.transform.parent == null) { //restoring original scale after inheritance
-			gameObject.transform.SetPositionAndRotation(gameObject.transform.position, gameObject.transform.parent.rotation);
+			gameObject.transform.SetLocalPositionAndRotation(gameObject.transform.localPosition, Quaternion.identity);
 			gameObject.transform.localScale = new Vector3(scale / gameObject.transform.parent.localScale.x,
-															scale / gameObject.transform.parent.localScale.y,
-															scale / gameObject.transform.parent.localScale.z);
+				scale / gameObject.transform.parent.localScale.y,
+				scale / gameObject.transform.parent.localScale.z);
 		}
-        gameObject.GetComponent<Rigidbody>().isKinematic = true;
-    }
+		Debug.Log(gameObject.transform.localScale / scale);
+	}
 }

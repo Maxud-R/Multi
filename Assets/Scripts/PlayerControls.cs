@@ -87,7 +87,7 @@ public class PlayerControls : MonoBehaviour {
 		if (this.isGrounded) {
 			vSpeed = -gravity;
 		} else {
-			if (controller.velocity.y > -30f) vSpeed -= gravity;
+			if (vSpeed > -1f) vSpeed -= gravity;
 		}
 		
 		//Jumping
@@ -118,7 +118,6 @@ public class PlayerControls : MonoBehaviour {
 			health -= (int)(boom.magnitude * 10f); //health after death may be negative
 		}
 		if (other.name == "Web") {
-			if (speed == 6f) StartCoroutine(SlowMowing());
 			boom = (transform.position - other.transform.position).normalized * (1/Vector3.Distance(other.transform.position, groundCheck.position));
 			health -= (int)(boom.magnitude * 20f);
 		}
@@ -137,13 +136,7 @@ public class PlayerControls : MonoBehaviour {
 				uiscr.ChatSystemSend("dead.");
 				PhotonNetwork.Destroy(gameObject);
 			}
-			//if (speed == 2f) speed = 6f;
 			yield return new WaitForSeconds(.3f);
 		}
-	}
-	IEnumerator SlowMowing() {
-		speed = 2f;
-		yield return new WaitForSeconds(1f);
-		speed = 6f;
 	}
 }

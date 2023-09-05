@@ -6,21 +6,24 @@ using Photon.Pun;
 public class RegularBomb : MonoBehaviour {
 	
 	public GameObject expl;
+	protected readonly float detonationTime = 2f;
+	protected readonly float particlesLifetime = 1f;
+	protected readonly float shockwaveDuration = .1f;
 	
-    void Start() {
+    private void Start() {
         StartCoroutine(Delay());
     }
     
-    IEnumerator Delay() {
-		yield return new WaitForSeconds(2f); //not needed to stop, it is automatically when destroy;
-		PhotonNetwork.Destroy(gameObject); //this bomb will be destroyed in 2 seconds
+    protected IEnumerator Delay() {
+		yield return new WaitForSeconds(detonationTime);
+		PhotonNetwork.Destroy(gameObject); //this bomb will be destroyed in x seconds
     }
-    void OnDestroy() {
+    protected void OnDestroy() {
 		GameObject blast = Instantiate(expl, transform.position, Quaternion.identity);
-		Destroy(blast.transform.GetChild(0).gameObject, .1f); //shockwawe
-		Destroy(blast, 1f); //destroy whole object (particles) after 1 second
+		Destroy(blast.transform.GetChild(0).gameObject, shockwaveDuration); //destroy shockwawe only
+		Destroy(blast, particlesLifetime); //destroy whole object (particles) after x seconds
 	}
-	void OnCollisionEnter(Collision data) {
+	virtual protected void OnCollisionEnter(Collision data) {
 		if (data.gameObject.name == "PlayerInterface(Clone)") PhotonNetwork.Destroy(gameObject);
 	}
 }

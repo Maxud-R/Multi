@@ -1,39 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
-public class StickyBomb : MonoBehaviour {
+public class StickyBomb : RegularBomb {
 	
-	public GameObject expl;
 	private float scale;
-	private readonly float detonationTime = 20f;
-	private readonly float particlesLifetime = 1f;
-	private readonly float shockwaveDuration = .1f;
 	
-    void Start() {
-        StartCoroutine(Delay());
-		scale = gameObject.transform.localScale.x; //bomb is round and symmetrical
+    private void Start() {
+		StartCoroutine(Delay());
+		scale = transform.localScale.x; //bomb is round and symmetrical
     }
-    
-    IEnumerator Delay() {
-		yield return new WaitForSeconds(detonationTime);
-		PhotonNetwork.Destroy(gameObject);
-    }
-    void OnDestroy() {
-		GameObject blast = Instantiate(expl, transform.position, Quaternion.identity);
-		Destroy(blast.transform.GetChild(0).gameObject, shockwaveDuration); //destroy only shockwawe
-		Destroy(blast, particlesLifetime);
-    }
-	void OnCollisionEnter(Collision data) {
-        gameObject.transform.SetParent(data.gameObject.transform);
-		gameObject.GetComponent<Rigidbody>().isKinematic = true;
-		if (data.gameObject.transform.parent == null) { //restoring original scale after inheritance
-			gameObject.transform.SetLocalPositionAndRotation(gameObject.transform.localPosition, Quaternion.identity);
-			gameObject.transform.localScale = new Vector3(scale / gameObject.transform.parent.localScale.x,
-				scale / gameObject.transform.parent.localScale.y,
-				scale / gameObject.transform.parent.localScale.z);
+
+	override protected void OnCollisionEnter(Collision data) {
+		GetComponent<Rigidbody>().isKinematic = true;
+		transform.SetParent(data.gameObject.transform);
+		while (transform.parent.parent != null) { //with moving objects works only those have no parents, or scaling brokes
+			transform.SetParent(transform.parent.parent);
 		}
-		Debug.Log(gameObject.transform.localScale / scale);
+		//restoring original scale after inheritance
+		transform.SetLocalPositionAndRotation(transform.localPosition, Quaternion.identity);
+		transform.localScale = new Vector3(scale / transform.parent.localScale.x,
+														scale / transform.parent.localScale.y,
+														scale / transform.parent.localScale.z);
 	}
 }

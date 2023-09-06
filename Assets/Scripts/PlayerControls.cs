@@ -12,7 +12,8 @@ public class PlayerControls : MonoBehaviour {
 	//moving variables
 	private float xAxis = 0f;
 	private float zAxis = 0f;
-	public Vector3 move;
+	[SerializeField]
+	private Vector3 move;
 	private float speed = 6f;
 	private float vSpeed = 0f;
 	private float gravity = .01f;
@@ -23,6 +24,7 @@ public class PlayerControls : MonoBehaviour {
 	public int health = 100;
 	public bool offline = false;
 	public const int BOMB_COUNT = 3;
+	private readonly Vector3 shootPoint = new Vector3(.85f, .2f, 1f);
 	
 	//debug var
 		
@@ -54,16 +56,18 @@ public class PlayerControls : MonoBehaviour {
 		}
 		
 		//preventing stick to flooring
-		if ((controller.collisionFlags & CollisionFlags.Above) != 0) vSpeed = -gravity;
+		if ((controller.collisionFlags & CollisionFlags.Above) != 0) {
+			vSpeed = -gravity;
+			boom.y = 0f;
+		}
 		
 		//shooting
 		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
-				Vector3 pos = transform.TransformPoint(new Vector3(.85f, .2f, 1f));
 				GameObject bomb;
 				if (!offline) {
-					bomb = PhotonNetwork.Instantiate(bombPref[uiscr.chosenBomb].name, pos, transform.rotation);
+					bomb = PhotonNetwork.Instantiate(bombPref[uiscr.chosenBomb].name, transform.TransformPoint(shootPoint), transform.rotation);
 				} else {
-					bomb = Instantiate(bombPref[uiscr.chosenBomb], pos, transform.rotation);
+					bomb = Instantiate(bombPref[uiscr.chosenBomb], transform.TransformPoint(shootPoint), transform.rotation);
 				}
 				bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+new Vector3(0f, .5f, 0f), ForceMode.Impulse);
 		}

@@ -18,6 +18,7 @@ public class StickyBomb : RegularBomb {
 			transform.SetParent(transform.parent.parent);
 		}
 		//restoring original scale after inheritance
+		if (transform.parent == null) return;
 		transform.SetLocalPositionAndRotation(transform.localPosition, Quaternion.identity);
 		transform.localScale = new Vector3(scale / transform.parent.localScale.x,
 														scale / transform.parent.localScale.y,

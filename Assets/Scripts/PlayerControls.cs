@@ -26,13 +26,12 @@ public class PlayerControls : MonoBehaviour {
 
 	//shooting variables
 	public const int BOMB_COUNT = 3;
-	public LayerMask exceptPlayer;
 	private readonly Vector3 shootOutPoint = new Vector3(.85f, .2f, 1f); //point of the hand in local space
-	private readonly float shootRayDistance = 40f;
 	private readonly Vector3 additiveHeight = new Vector3(0f, .5f, 0f);
+	private readonly float offset = -0.087f;
 	
 	//debug var
-		
+
 	//in-script defined links
 	private PhotonView photonView;
 	private CharacterController controller;
@@ -69,18 +68,13 @@ public class PlayerControls : MonoBehaviour {
 		//shooting
 		if (Input.GetMouseButtonDown(0) && uiscr.lockedCursor) {
 				GameObject bomb;
-				RaycastHit rayInfo;
 				if (!offline) {
 					bomb = PhotonNetwork.Instantiate(bombPref[uiscr.chosenBomb].name, transform.TransformPoint(shootOutPoint), transform.rotation);
 				} else {
 					bomb = Instantiate(bombPref[uiscr.chosenBomb], transform.TransformPoint(shootOutPoint), transform.rotation);
 				}
-				if (Physics.Raycast(cam.transform.position, cam.transform.forward, out rayInfo, shootRayDistance, exceptPlayer)) {
-					bomb.GetComponent<Rigidbody>().AddForce((rayInfo.point-transform.TransformPoint(shootOutPoint)).normalized+additiveHeight, ForceMode.Impulse);
-
-				} else {
-					bomb.GetComponent<Rigidbody>().AddForce(cam.transform.forward+additiveHeight, ForceMode.Impulse);
-				}
+				Vector3 ray = (cam.transform.forward+cam.transform.right*offset).normalized+additiveHeight;
+				bomb.GetComponent<Rigidbody>().AddForce(ray, ForceMode.Impulse);
 				
 		}
 	}

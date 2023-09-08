@@ -14,7 +14,7 @@ public class StickyBomb : RegularBomb {
 	override protected void OnCollisionEnter(Collision data) {
 		GetComponent<Rigidbody>().isKinematic = true;
 		transform.SetParent(data.gameObject.transform);
-		while (transform.parent.parent != null) { //with moving objects works only those have no parents, or scaling brokes
+		while (transform.parent != null && transform.parent.parent != null) { //with moving objects works only those have no parents, or scaling brokes
 			transform.SetParent(transform.parent.parent);
 		}
 		//restoring original scale after inheritance

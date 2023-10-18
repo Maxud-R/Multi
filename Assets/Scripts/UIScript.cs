@@ -26,6 +26,7 @@ public class UIScript : MonoBehaviour {
 	public Text desc;
 	public Text chatText;
 	public Text[] chatLines = new Text[3];
+	public Text log;
 	public Image hbar;
 	public ChatScript chscr;
 	public InputField chatInputField;
@@ -41,6 +42,7 @@ public class UIScript : MonoBehaviour {
 		color.a = 0;
     }
     void Update () {
+		log.text = ""+Input.mousePosition;
 		//cursor lock & in-game menu show
 		if ((Input.GetButtonDown("Cancel") || Input.GetButtonDown("Submit")) && Application.isFocused) lockedCursor = !lockedCursor;
 		if (lockedCursor){

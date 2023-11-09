@@ -10,10 +10,12 @@ public class Destruction : MonoBehaviour {
     private Vector3[] splittedSize = new Vector3[slices.x*slices.y*slices.z];
     public GameObject expl;
     public Mesh[] states = new Mesh[MESH_PIECES]; 
-    public GameObject partSys;
+    public GameObject partSysPref;
+    private ParticleSystem partSys;
     void Start() {
         destStatePrev = destState;
-        splittedSize = SplitSize(gameObject.GetComponent<BoxCollider>().bounds.size, slices); //перенести из цикла в пофреймовый спавн частиц по одной.
+        splittedSize = SplitSize(gameObject.GetComponent<BoxCollider>().bounds.size, slices);
+        partSys = GameObject.Find("StabPieces").GetComponent<ParticleSystem>();
     }
     
     void FixedUpdate() {
@@ -24,19 +26,18 @@ public class Destruction : MonoBehaviour {
     }
     void OnTriggerEnter(Collider shockwave) {
         if (shockwave.name == expl.transform.GetChild(0).name) {
-            //Debug.DrawRay(other.ClosestPoint(transform.position), transform.position - other.ClosestPoint(transform.position), Color.red, 10f);
-            //partSys.transform.rotation = Quaternion.LookRotation(-shockwave.transform.position, shockwave.transform.up);//??
-            List<Vector3> points = new List<Vector3>();
+            int pointsCount = 0;
             foreach(Vector3 position in splittedSize) {
                 Vector3 a = shockwave.ClosestPoint(position);
                 if (a == position) {
-                    points.Add(a);
+                    partSys.transform.position = a;
+                    partSys.transform.rotation = Quaternion.LookRotation(a - shockwave.transform.position, transform.up);
+                    partSys.Emit(1);
+                    pointsCount++;
+                    Debug.DrawRay(a, transform.TransformPoint(Vector3.up), Color.red, 1.5f);
                 }
             }
-            Instantiate(partSys, shockwave.transform.position, Quaternion.identity).GetComponent<ParticleSpawnData>().Init(shockwave.transform.position, points);
-        }
-		if (shockwave.name == expl.transform.GetChild(0).name && destState < MESH_PIECES-1) {
-            destState++;
+            destState = (int)Mathf.Ceil((MESH_PIECES-1)*(Mathf.Round(pointsCount/((float)splittedSize.Length/100))/100));
         }
     }
     Vector3[] SplitSize(Vector3 size, Vector3Int pieces) {

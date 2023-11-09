@@ -127,7 +127,8 @@ MonoBehaviour:
   - {fileID: -8031619785718356097, guid: f9c6e9eae8d0ba54c8b22ffc3dc6c26f, type: 3}
   - {fileID: -8031619785718356097, guid: 1970bd89fd03ce8449428dfebad53084, type: 3}
   - {fileID: -8031619785718356097, guid: 44ce26225d580b9448e65a71434fb695, type: 3}
-  partSys: {fileID: 820386858265454504, guid: 53aab916fd40b1e4d9bb8718e40ccae2, type: 3}
+  partSysPref: {fileID: 820386858265454504, guid: 53aab916fd40b1e4d9bb8718e40ccae2,
+    type: 3}
 --- !u!54 &3959161235397027758
 Rigidbody:
   m_ObjectHideFlags: 0

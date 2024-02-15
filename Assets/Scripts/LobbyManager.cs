@@ -30,7 +30,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
 	}
 	public override void OnJoinedRoom() {
 		Log("Joined the room");
-		PhotonNetwork.LoadLevel("Game");
+		PhotonNetwork.LoadLevel("game2");
 	}
     private void Log(string message) {
 		Debug.Log(message);

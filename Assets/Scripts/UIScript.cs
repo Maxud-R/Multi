@@ -42,7 +42,7 @@ public class UIScript : MonoBehaviour {
 		color.a = 0;
     }
     void Update () {
-		log.text = ""+Input.mousePosition;
+		log.text = ""+Input.mousePosition+"\n"+Cursor.lockState;
 		//cursor lock & in-game menu show
 		if ((Input.GetButtonDown("Cancel") || Input.GetButtonDown("Submit")) && Application.isFocused) lockedCursor = !lockedCursor;
 		if (lockedCursor){
